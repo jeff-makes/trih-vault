@@ -21,9 +21,9 @@ export async function generateStaticParams() {
 }
 
 type EpisodePageParams = {
-  params: {
+  params: Promise<{
     slug?: string;
-  };
+  }>;
 };
 
 const getEpisodeNumber = (slug?: string): number | null => {
@@ -50,7 +50,8 @@ export async function generateMetadata({ params }: EpisodePageParams): Promise<M
     };
   }
 
-  const { slug } = params;
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
   if (!slug) {
     return {
       title: 'Episode not found',
@@ -104,7 +105,8 @@ export default async function EpisodePage({ params }: EpisodePageParams) {
     notFound();
   }
 
-  const { slug } = params;
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
   if (!slug) {
     notFound();
   }
