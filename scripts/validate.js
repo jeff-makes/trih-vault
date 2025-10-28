@@ -3,81 +3,130 @@ import { readJsonFile } from './utils.js';
 async function main() {
   const episodes = await readJsonFile('public/episodes.json', []);
   const series = await readJsonFile('public/series.json', []);
-  const topics = await readJsonFile('public/topics.json', []);
+  await readJsonFile('public/topics.json', []);
 
   const errors = [];
-
-  const uniqueCheck = (items, label) => {
-    const seen = new Set();
-    for (const item of items) {
-      if (seen.has(item.id)) {
-        errors.push(`${label} duplicate id: ${item.id}`);
-      }
-      seen.add(item.id);
-    }
-  };
-
-  uniqueCheck(episodes, 'Episode');
-  uniqueCheck(series, 'Series');
-  uniqueCheck(topics, 'Topic');
-
-  const episodesById = new Map(episodes.map((entry) => [entry.id, entry]));
-  const seriesById = new Map(series.map((entry) => [entry.id, entry]));
-  const topicsById = new Map(topics.map((entry) => [entry.id, entry]));
-
+  const episodesById = new Map();
   for (const episode of episodes) {
-    if (!episode.seriesId) {
-      if (typeof episode.part === 'number') {
-        errors.push(`Episode ${episode.id} has part ${episode.part} but no seriesId`);
-      }
-      continue;
+    const label = typeof episode.id === 'string' && episode.id ? episode.id : '<missing id>';
+    if (typeof episode.id !== 'string' || episode.id.trim() === '') {
+      errors.push(`Episode missing valid id`);
+    } else if (episodesById.has(episode.id)) {
+      errors.push(`Episode duplicate id: ${episode.id}`);
+    } else {
+      episodesById.set(episode.id, episode);
     }
-    if (!seriesById.has(episode.seriesId)) {
-      errors.push(`Episode ${episode.id} references missing series ${episode.seriesId}`);
+
+    if (typeof episode.title !== 'string' || episode.title.trim() === '') {
+      errors.push(`Episode ${label} missing title`);
+    }
+    if (typeof episode.pubDate !== 'string' || episode.pubDate.trim() === '') {
+      errors.push(`Episode ${label} missing pubDate`);
+    }
+    if (typeof episode.audioUrl !== 'string' || episode.audioUrl.trim() === '') {
+      errors.push(`Episode ${label} missing audioUrl`);
+    }
+
+    if (episode.part === null || episode.part === undefined) {
+      if (episode.seriesId !== null && episode.seriesId !== undefined) {
+        errors.push(`Episode ${label} has no part but includes seriesId ${episode.seriesId}`);
+      }
+    } else if (typeof episode.part === 'number') {
+      if (!Number.isFinite(episode.part)) {
+        errors.push(`Episode ${label} has non-finite part ${episode.part}`);
+      }
+      if (typeof episode.seriesId !== 'string' || episode.seriesId.trim() === '') {
+        errors.push(`Episode ${label} has part ${episode.part} but missing seriesId`);
+      }
+    } else {
+      errors.push(`Episode ${label} has invalid part value ${episode.part}`);
     }
   }
 
+  const seriesById = new Map();
   for (const entry of series) {
-    if (!topicsById.has(entry.topicId)) {
-      errors.push(`Series ${entry.id} references missing topic ${entry.topicId}`);
+    const label = typeof entry.id === 'string' && entry.id ? entry.id : '<missing id>';
+    if (typeof entry.id !== 'string' || entry.id.trim() === '') {
+      errors.push('Series missing valid id');
+    } else {
+      if (!entry.id.startsWith('s_')) {
+        errors.push(`Series ${entry.id} id must start with s_`);
+      }
+      if (seriesById.has(entry.id)) {
+        errors.push(`Series duplicate id: ${entry.id}`);
+      } else {
+        seriesById.set(entry.id, entry);
+      }
+    }
+
+    if (typeof entry.title !== 'string' || entry.title.trim() === '') {
+      errors.push(`Series ${label} missing title`);
+    }
+
+    if (entry.yearFrom !== null && entry.yearFrom !== undefined && typeof entry.yearFrom !== 'number') {
+      errors.push(`Series ${label} has invalid yearFrom ${entry.yearFrom}`);
+    }
+    if (entry.yearTo !== null && entry.yearTo !== undefined && typeof entry.yearTo !== 'number') {
+      errors.push(`Series ${label} has invalid yearTo ${entry.yearTo}`);
     }
     if (typeof entry.yearFrom === 'number' && typeof entry.yearTo === 'number' && entry.yearFrom > entry.yearTo) {
-      errors.push(`Series ${entry.id} has invalid year range ${entry.yearFrom} > ${entry.yearTo}`);
+      errors.push(`Series ${label} has invalid year range ${entry.yearFrom} > ${entry.yearTo}`);
     }
-    const seen = new Set();
+
+    if (!Array.isArray(entry.episodeIds)) {
+      errors.push(`Series ${label} missing episodeIds array`);
+      continue;
+    }
+
+    const seenEpisodeIds = new Set();
     for (const episodeId of entry.episodeIds) {
-      if (!seen.add(episodeId)) {
-        errors.push(`Series ${entry.id} repeats episode ${episodeId}`);
+      if (typeof episodeId !== 'string' || episodeId.trim() === '') {
+        errors.push(`Series ${label} has invalid episode id ${episodeId}`);
+        continue;
+      }
+      if (!seenEpisodeIds.add(episodeId)) {
+        errors.push(`Series ${label} repeats episode ${episodeId}`);
       }
       const episode = episodesById.get(episodeId);
       if (!episode) {
-        errors.push(`Series ${entry.id} references missing episode ${episodeId}`);
-      } else if (episode.seriesId !== entry.id) {
-        errors.push(`Episode ${episode.id} expects series ${episode.seriesId} but listed under ${entry.id}`);
+        errors.push(`Series ${label} references missing episode ${episodeId}`);
+        continue;
+      }
+      if (episode.seriesId !== entry.id) {
+        errors.push(`Episode ${episode.id} expects series ${episode.seriesId ?? '<none>'} but listed under ${entry.id}`);
       }
     }
   }
 
-  for (const topic of topics) {
-    const seen = new Set();
-    for (const seriesId of topic.seriesIds) {
-      if (!seen.add(seriesId)) {
-        errors.push(`Topic ${topic.id} repeats series ${seriesId}`);
-      }
-      const seriesEntry = seriesById.get(seriesId);
+  for (const episode of episodes) {
+    if (typeof episode.seriesId === 'string' && episode.seriesId.trim() !== '') {
+      const seriesEntry = seriesById.get(episode.seriesId);
+      const label = typeof episode.id === 'string' && episode.id ? episode.id : '<missing id>';
       if (!seriesEntry) {
-        errors.push(`Topic ${topic.id} references missing series ${seriesId}`);
-      } else if (seriesEntry.topicId !== topic.id) {
-        errors.push(`Series ${seriesId} mapped to topic ${seriesEntry.topicId} but listed under topic ${topic.id}`);
+        errors.push(`Episode ${label} references missing series ${episode.seriesId}`);
+        continue;
+      }
+      if (!Array.isArray(seriesEntry.episodeIds) || !seriesEntry.episodeIds.includes(episode.id)) {
+        errors.push(`Episode ${label} missing from series ${seriesEntry.id} episodeIds`);
       }
     }
   }
 
-  for (const entry of series) {
-    const topic = topicsById.get(entry.topicId);
-    if (topic && !topic.seriesIds.includes(entry.id)) {
-      errors.push(`Topic ${topic.id} missing series ${entry.id}`);
-    }
+  const nelsonSeries = series.find(
+    (entry) => Array.isArray(entry.episodeIds) && entry.episodeIds.includes('ep608') && entry.episodeIds.includes('ep609')
+  );
+  if (nelsonSeries) {
+    const parts = nelsonSeries.episodeIds.map((episodeId) => {
+      const episode = episodesById.get(episodeId);
+      return typeof episode?.part === 'number' ? episode.part : null;
+    });
+    console.log(
+      `Nelson sanity: series ${nelsonSeries.id} episodeCount=${nelsonSeries.episodeIds.length} episodes=[${nelsonSeries.episodeIds.join(
+        ', '
+      )}] parts=[${parts.join(', ')}]`
+    );
+  } else {
+    console.log('Nelson sanity: no series found for episodes ep608 and ep609');
   }
 
   if (errors.length > 0) {

@@ -36,6 +36,7 @@ async function main() {
   for (const episode of episodes) {
     const cleaned = { ...episode };
     delete cleaned.seriesId;
+    delete cleaned.topicId;
     cleaned.part = null;
     baseEpisodes.set(episode.id, cleaned);
   }
@@ -140,6 +141,7 @@ async function main() {
       }
       existing.part = entry.part;
       existing.seriesId = seriesId;
+      delete existing.topicId;
       baseEpisodes.set(entry.episode.id, existing);
       episodeIds.push(entry.episode.id);
     }
@@ -185,6 +187,23 @@ async function main() {
   console.log('Total episodes:', episodes.length);
   console.log('Series (multi-part):', seriesRecords.length);
   console.log('Singletons:', singletonsCount);
+
+  const nelsonSeries = seriesRecords.find(
+    (entry) => entry.episodeIds.includes('ep608') && entry.episodeIds.includes('ep609')
+  );
+  if (nelsonSeries) {
+    const parts = nelsonSeries.episodeIds.map((episodeId) => {
+      const episode = updatedEpisodes.find((entry) => entry.id === episodeId);
+      return typeof episode?.part === 'number' ? episode.part : null;
+    });
+    console.log(
+      `Nelson sanity: series ${nelsonSeries.id} episodeCount=${nelsonSeries.episodeIds.length} episodes=[${nelsonSeries.episodeIds.join(
+        ', '
+      )}] parts=[${parts.join(', ')}]`
+    );
+  } else {
+    console.log('Nelson sanity: no series found for episodes ep608 and ep609');
+  }
 
   const preview = debugSeries.slice(0, 10);
   for (const entry of preview) {
