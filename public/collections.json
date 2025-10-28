@@ -1,0 +1,254 @@
+[
+  {
+    "key": "1922-the-birth-of-the-modern-world",
+    "title": "1922: The Birth of the Modern World",
+    "count": 2,
+    "episodes": [
+      136,
+      137
+    ],
+    "slugs": [
+      "136-the-birth-of-the-modern-world-part-1",
+      "137-the-birth-of-the-modern-world-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "alexander-the-great",
+    "title": "Alexander the great",
+    "count": 2,
+    "episodes": [
+      116,
+      117
+    ],
+    "slugs": [
+      "116-alexander-the-great-part-1",
+      "117-alexander-the-great-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "china-and-world-war-ii",
+    "title": "China and World War II (",
+    "count": 2,
+    "episodes": [
+      235,
+      236
+    ],
+    "slugs": [
+      "235-china-and-world-war-ii-part-1",
+      "236-china-and-world-war-ii-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "history-s-biggest-questions-with-dan-carlin",
+    "title": "History's Biggest Questions with Dan Carlin (",
+    "count": 2,
+    "episodes": [
+      183,
+      184
+    ],
+    "slugs": [
+      "183-historys-biggest-questions-with-dan-carlin-part-1",
+      "184-historys-biggest-questions-with-dan-carlin-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "hitler",
+    "title": "Hitler",
+    "count": 2,
+    "episodes": [
+      64,
+      65
+    ],
+    "slugs": [
+      "64-hitler-with-ian-kershaw---part-2",
+      "65-a-very-british-scandal"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "modern-olympics",
+    "title": "Modern Olympics",
+    "count": 2,
+    "episodes": [
+      80,
+      81
+    ],
+    "slugs": [
+      "80-modern-olympics---part-1",
+      "81-modern-olympics---part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "queen-elizabeth-ii",
+    "title": "Queen Elizabeth II (",
+    "count": 2,
+    "episodes": [
+      231,
+      232
+    ],
+    "slugs": [
+      "231-queen-elizabeth-ii-part-1",
+      "232-queen-elizabeth-ii-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "silicon-valley",
+    "title": "Silicon Valley",
+    "count": 2,
+    "episodes": [
+      93,
+      94
+    ],
+    "slugs": [
+      "93-silicon-valley-part-1",
+      "94-silicon-valley-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "the-princes-in-the-tower",
+    "title": "The Princes in the Tower",
+    "count": 2,
+    "episodes": [
+      138,
+      139
+    ],
+    "slugs": [
+      "138-the-princes-in-the-tower-part-1",
+      "139-the-princes-in-the-tower-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "the-trial-of-charles-i",
+    "title": "The Trial of Charles I",
+    "count": 2,
+    "episodes": [
+      143,
+      144
+    ],
+    "slugs": [
+      "143-the-trial-of-charles-i-part-1",
+      "144-the-trial-of-charles-i-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "the-world-cup-of-gods",
+    "title": "The World Cup of Gods",
+    "count": 2,
+    "episodes": [
+      58,
+      59
+    ],
+    "slugs": [
+      "58-the-world-cup-of-gods---part-1",
+      "59-the-world-cup-of-gods---part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  },
+  {
+    "key": "watergate",
+    "title": "Watergate",
+    "count": 2,
+    "episodes": [
+      106,
+      107
+    ],
+    "slugs": [
+      "106-watergate-part-1",
+      "107-watergate-part-2"
+    ],
+    "parts": [
+      1,
+      2
+    ],
+    "years": {
+      "min": null,
+      "max": null
+    }
+  }
+]
