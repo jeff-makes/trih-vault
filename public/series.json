@@ -6,11 +6,12 @@
       "ep_d75733229f",
       "ep_04d1e513e1"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1912,
+    "yearTo": 1937,
     "provisional": {
       "head": "china-and-world-war-ii"
-    }
+    },
+    "publicTitle": "China in the War Years: 1912-1937"
   },
   {
     "id": "s_09f16ecdec",
@@ -25,11 +26,12 @@
       "ep_9050251b1a",
       "ep_417333105c"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1519,
+    "yearTo": 1521,
     "provisional": {
       "head": "the-fall-of-the-aztecs"
-    }
+    },
+    "publicTitle": "The Fall of the Aztecs: 1519-1521"
   },
   {
     "id": "s_12cd3d657b",
@@ -41,11 +43,12 @@
       "ep_9ff5da2b53",
       "ep_9c17c53a37"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1758,
+    "yearTo": 1798,
     "provisional": {
       "head": "nelson"
-    }
+    },
+    "publicTitle": "Rise of Britain's Sea Power"
   },
   {
     "id": "s_1cdb2ae309",
@@ -54,11 +57,12 @@
       "ep_09bf172549",
       "ep_0ca9257300"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1399,
+    "yearTo": 1403,
     "provisional": {
       "head": "henry-iv"
-    }
+    },
+    "publicTitle": "Henry IV: Crown and Rebellion"
   },
   {
     "id": "s_227ae6d520",
@@ -70,11 +74,12 @@
       "ep_a7eb06ffe3",
       "ep_cc80d9b4e9"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1517,
+    "yearTo": 1524,
     "provisional": {
       "head": "luther"
-    }
+    },
+    "publicTitle": "Luther: The Reformation Unleashed"
   },
   {
     "id": "s_2a7504a7b6",
@@ -84,11 +89,12 @@
       "ep_21606d1473",
       "ep_76338f18fa"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1877,
+    "yearTo": 1883,
     "provisional": {
       "head": "fall-of-the-sioux"
-    }
+    },
+    "publicTitle": "Sioux Downfall: War, Ghost Dance, Massacre"
   },
   {
     "id": "s_2d59b712c5",
@@ -101,11 +107,12 @@
       "ep_c20a159e8e",
       "ep_4b22b27149"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1900,
+    "yearTo": 1912,
     "provisional": {
       "head": "titanic"
-    }
+    },
+    "publicTitle": "Titanic: Origins and Aftermath"
   },
   {
     "id": "s_2f9a602132",
@@ -115,10 +122,11 @@
       "ep_fd64f235db"
     ],
     "yearFrom": null,
-    "yearTo": null,
+    "yearTo": 1066,
     "provisional": {
       "head": "the-last-viking"
-    }
+    },
+    "publicTitle": "Harald Hardrada: Viking of Two Worlds"
   },
   {
     "id": "s_3b505d1786",
@@ -134,7 +142,8 @@
     "yearTo": null,
     "provisional": {
       "head": "evita"
-    }
+    },
+    "publicTitle": "Evita: Birth, Rise, Power, and Mystery"
   },
   {
     "id": "s_415dd99884",
@@ -149,7 +158,8 @@
     "yearTo": null,
     "provisional": {
       "head": "baghdad"
-    }
+    },
+    "publicTitle": "Baghdad: Caliphs, Capital, and a Cosmopolitan Age"
   },
   {
     "id": "s_42d9dd4ddf",
@@ -160,11 +170,12 @@
       "ep_8245571646",
       "ep_4d23eee615"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 975,
+    "yearTo": 1066,
     "provisional": {
       "head": "the-road-to-1066"
-    }
+    },
+    "publicTitle": "England's Turning Point: Vikings to Hastings"
   },
   {
     "id": "s_4459e607e4",
@@ -178,11 +189,12 @@
       "ep_e885cf44a8",
       "ep_492c3b1de4"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1961,
+    "yearTo": 1963,
     "provisional": {
       "head": "jfk"
-    }
+    },
+    "publicTitle": "JFK: The Kennedy Mystery"
   },
   {
     "id": "s_4750156ad1",
@@ -195,11 +207,12 @@
       "ep_e3abbadc42",
       "ep_31a340eb41"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1913,
+    "yearTo": 1914,
     "provisional": {
       "head": "the-road-to-the-great-war"
-    }
+    },
+    "publicTitle": "Countdown to World War I"
   },
   {
     "id": "s_4a4f7fb992",
@@ -214,7 +227,8 @@
     "yearTo": null,
     "provisional": {
       "head": "greek-myths"
-    }
+    },
+    "publicTitle": "Greek Myths: Titans to Tragedy"
   },
   {
     "id": "s_538f340d65",
@@ -223,11 +237,12 @@
       "ep_771694265d",
       "ep_98f935c535"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1930,
+    "yearTo": 1938,
     "provisional": {
       "head": "the-nazis-road-to-war"
-    }
+    },
+    "publicTitle": "Munich, 1938: The Clash That Led to War"
   },
   {
     "id": "s_54e7b14dc6",
@@ -237,11 +252,12 @@
       "ep_8b26b99b9a",
       "ep_037c4d5040"
     ],
-    "yearFrom": null,
+    "yearFrom": 1901,
     "yearTo": null,
     "provisional": {
       "head": "australian-prime-ministers"
-    }
+    },
+    "publicTitle": "Australian PMs: Barton to Morrison"
   },
   {
     "id": "s_597f145a1d",
@@ -251,11 +267,12 @@
       "ep_bbea740af1",
       "ep_56af419fd0"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1953,
+    "yearTo": 1994,
     "provisional": {
       "head": "the-world-cup"
-    }
+    },
+    "publicTitle": "Global Game: Politics, War, and Glory"
   },
   {
     "id": "s_5a76d59a90",
@@ -266,11 +283,12 @@
       "ep_5b4be83abb",
       "ep_0b4059349c"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1415,
+    "yearTo": 1415,
     "provisional": {
       "head": "hundred-years-war"
-    }
+    },
+    "publicTitle": "Henry V's 1415 French Campaign"
   },
   {
     "id": "s_5c75481c8c",
@@ -282,11 +300,12 @@
       "ep_438f792430",
       "ep_2d31cff158"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1791,
+    "yearTo": 1792,
     "provisional": {
       "head": "the-french-revolution"
-    }
+    },
+    "publicTitle": "France in Revolt: 1791–1792"
   },
   {
     "id": "s_63e442b4d4",
@@ -297,11 +316,12 @@
       "ep_f4eb4a987b",
       "ep_96af217b73"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1792,
+    "yearTo": 1793,
     "provisional": {
       "head": "the-french-revolution"
-    }
+    },
+    "publicTitle": "France in Revolt (1792–1793)"
   },
   {
     "id": "s_692216f22f",
@@ -310,11 +330,12 @@
       "ep_99c710b4a3",
       "ep_06bcb12c08"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1870,
+    "yearTo": 1870,
     "provisional": {
       "head": "helen-of-troy"
-    }
+    },
+    "publicTitle": "Helen of Troy: Myth, Power, and Fate"
   },
   {
     "id": "s_6c85b00d1e",
@@ -325,11 +346,12 @@
       "ep_01f3fa09b0",
       "ep_e3b43d88dd"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1873,
+    "yearTo": 1876,
     "provisional": {
       "head": "custer-s-last-stand"
-    }
+    },
+    "publicTitle": "Roads to Little Bighorn: 1873-1876"
   },
   {
     "id": "s_6dca18b29a",
@@ -338,11 +360,12 @@
       "ep_b5f61370aa",
       "ep_bc1919d986"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1973,
+    "yearTo": 1973,
     "provisional": {
       "head": "the-1973-chilean-coup"
-    }
+    },
+    "publicTitle": "Chile 1973 Coup: From Allende to Pinochet"
   },
   {
     "id": "s_7dc56b1fbc",
@@ -351,11 +374,12 @@
       "ep_fe2ddb481b",
       "ep_c7cc352580"
     ],
-    "yearFrom": null,
+    "yearFrom": 1952,
     "yearTo": null,
     "provisional": {
       "head": "queen-elizabeth-ii"
-    }
+    },
+    "publicTitle": "Elizabeth II: From youth to coronation"
   },
   {
     "id": "s_80b6a375fc",
@@ -366,11 +390,12 @@
       "ep_f84681628a",
       "ep_6d3044c926"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -218,
+    "yearTo": 1968,
     "provisional": {
       "head": "portugal"
-    }
+    },
+    "publicTitle": "Portugal: From Antiquity to the 20th Century"
   },
   {
     "id": "s_885de9da60",
@@ -384,7 +409,8 @@
     "yearTo": null,
     "provisional": {
       "head": "london"
-    }
+    },
+    "publicTitle": "London Through Time"
   },
   {
     "id": "s_8b973b77ac",
@@ -393,11 +419,12 @@
       "ep_e1cb17cbc1",
       "ep_f094585777"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1960,
+    "yearTo": 1969,
     "provisional": {
       "head": "the-rolling-stones"
-    }
+    },
+    "publicTitle": "Rolling Stones: The Sixties Rise and Altamont"
   },
   {
     "id": "s_8c231d11a3",
@@ -406,11 +433,12 @@
       "ep_d747e4dcbc",
       "ep_4da31d2980"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1700,
+    "yearTo": 1799,
     "provisional": {
       "head": "captain-cook"
-    }
+    },
+    "publicTitle": "Captain Cook: Pacific Voyages"
   },
   {
     "id": "s_908be53f21",
@@ -423,7 +451,8 @@
     "yearTo": null,
     "provisional": {
       "head": "sixties-fashion"
-    }
+    },
+    "publicTitle": "Sixties Fashion: From Postwar to Psychedelia"
   },
   {
     "id": "s_94675c1138",
@@ -432,11 +461,12 @@
       "ep_2b3822634b",
       "ep_569e8315c7"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1381,
+    "yearTo": 1381,
     "provisional": {
       "head": "the-peasants-revolt"
-    }
+    },
+    "publicTitle": "The Peasants' Revolt: England 1381"
   },
   {
     "id": "s_95fa8bcced",
@@ -448,11 +478,12 @@
       "ep_b37c4e195a",
       "ep_977d962408"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1798,
+    "yearTo": 1805,
     "provisional": {
       "head": "nelson"
-    }
+    },
+    "publicTitle": "Nelson: Nile to Trafalgar"
   },
   {
     "id": "s_984f90e690",
@@ -462,11 +493,12 @@
       "ep_7faeb5a328",
       "ep_41f40f06a9"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 741,
+    "yearTo": 800,
     "provisional": {
       "head": "charlemagne"
-    }
+    },
+    "publicTitle": "Charlemagne: Rise of the Frankish Empire"
   },
   {
     "id": "s_991d7e65a7",
@@ -479,11 +511,12 @@
       "ep_db47b8a11c",
       "ep_4200114493"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1914,
+    "yearTo": 1914,
     "provisional": {
       "head": "the-first-world-war"
-    }
+    },
+    "publicTitle": "Outbreaks and Early Fronts of 1914"
   },
   {
     "id": "s_9da35ee6aa",
@@ -496,11 +529,12 @@
       "ep_143cf522ab",
       "ep_fb2758aeb6"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1542,
+    "yearTo": 1587,
     "provisional": {
       "head": "mary-queen-of-scots"
-    }
+    },
+    "publicTitle": "Mary, Queen of Scots: Thrones and Rivalries"
   },
   {
     "id": "s_a272e97d60",
@@ -509,11 +543,12 @@
       "ep_edc86adf3b",
       "ep_2ca2fa88b2"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1958,
+    "yearTo": 2022,
     "provisional": {
       "head": "french-presidents"
-    }
+    },
+    "publicTitle": "France's Postwar Presidents: 1958-2022"
   },
   {
     "id": "s_a868a5bd25",
@@ -522,11 +557,12 @@
       "ep661",
       "ep662"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -336,
+    "yearTo": -334,
     "provisional": {
       "head": "alexander-the-great"
-    }
+    },
+    "publicTitle": "Rise of Macedon: Eastward to Persia"
   },
   {
     "id": "s_ab23ff5ce0",
@@ -536,11 +572,12 @@
       "ep_596689017e",
       "ep_9f1cba9e3c"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 301,
+    "yearTo": 711,
     "provisional": {
       "head": "warlords-of-the-west"
-    }
+    },
+    "publicTitle": "Warlords of the West: Franks Ascendant"
   },
   {
     "id": "s_acc637de00",
@@ -550,11 +587,12 @@
       "ep_5da07f9bef",
       "ep_567451ed2a"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1861,
+    "yearTo": 1865,
     "provisional": {
       "head": "american-civil-war"
-    }
+    },
+    "publicTitle": "Civil War Chronicles: From First Sparks to Legacy"
   },
   {
     "id": "s_b8b65dafbd",
@@ -565,11 +603,12 @@
       "ep_38c7c338aa",
       "ep_f29a107fed"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -55,
+    "yearTo": 60,
     "provisional": {
       "head": "the-roman-conquest-of-britain"
-    }
+    },
+    "publicTitle": "Rome in Britain: From Caesar to Boudicca"
   },
   {
     "id": "s_b985bbbc94",
@@ -582,7 +621,8 @@
     "yearTo": null,
     "provisional": {
       "head": "watergate"
-    }
+    },
+    "publicTitle": "Watergate: From Nixon's Rise to Downfall"
   },
   {
     "id": "s_b9a24adc53",
@@ -597,11 +637,12 @@
       "ep_c4f0a1ffaf",
       "ep_bbe9dbd975"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1785,
+    "yearTo": 1791,
     "provisional": {
       "head": "the-french-revolution"
-    }
+    },
+    "publicTitle": "The French Revolution: From Diamond Scandal to Escape"
   },
   {
     "id": "s_be6840965b",
@@ -614,7 +655,8 @@
     "yearTo": null,
     "provisional": {
       "head": "peter-the-great"
-    }
+    },
+    "publicTitle": "Peter the Great: Rise, Reforms, and War"
   },
   {
     "id": "s_bf5157fc6c",
@@ -627,7 +669,8 @@
     "yearTo": null,
     "provisional": {
       "head": "history-s-biggest-questions-with-dan-carlin"
-    }
+    },
+    "publicTitle": "What Ifs Across History: Dan Carlin"
   },
   {
     "id": "s_c339af32a0",
@@ -638,10 +681,11 @@
       "ep_182a23ebe7"
     ],
     "yearFrom": null,
-    "yearTo": null,
+    "yearTo": 1885,
     "provisional": {
       "head": "horror-in-the-congo"
-    }
+    },
+    "publicTitle": "Congo Shadows: Leopold's Legacy"
   },
   {
     "id": "s_c5626ef817",
@@ -650,11 +694,12 @@
       "ep_523e50fd49",
       "ep_3e6b082696"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1921,
+    "yearTo": 1922,
     "provisional": {
       "head": "the-irish-civil-war"
-    }
+    },
+    "publicTitle": "Ireland's Civil War (1921–1922)"
   },
   {
     "id": "s_c606c1817a",
@@ -668,7 +713,8 @@
     "yearTo": null,
     "provisional": {
       "head": "trafalgar"
-    }
+    },
+    "publicTitle": "Trafalgar: Battle, Strategy, Legend"
   },
   {
     "id": "s_c7c77b7fe9",
@@ -681,11 +727,12 @@
       "ep_1349d2b4e1",
       "ep_157d3354ba"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1968,
+    "yearTo": 1968,
     "provisional": {
       "head": "america-in-68"
-    }
+    },
+    "publicTitle": "America in '68: A Year of Turbulence"
   },
   {
     "id": "s_ce45096722",
@@ -696,11 +743,12 @@
       "ep_bad1cc5b44",
       "ep_34e1ce9d1b"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1066,
+    "yearTo": 1086,
     "provisional": {
       "head": "1066"
-    }
+    },
+    "publicTitle": "1066: War, Hastings, and the Norman Dawn"
   },
   {
     "id": "s_d0232122dd",
@@ -713,7 +761,8 @@
     "yearTo": null,
     "provisional": {
       "head": "young-napoleon"
-    }
+    },
+    "publicTitle": "Young Napoleon: Corsica to the French Army"
   },
   {
     "id": "s_d2f585d91c",
@@ -724,11 +773,12 @@
       "ep_91ac4515c8",
       "ep_7c370abf7e"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1860,
+    "yearTo": 1868,
     "provisional": {
       "head": "custer-vs-crazy-horse"
-    }
+    },
+    "publicTitle": "The Great Plains Clash: Custer and the Sioux"
   },
   {
     "id": "s_d32ce5eab3",
@@ -740,10 +790,11 @@
       "ep_d9c82b05f4"
     ],
     "yearFrom": null,
-    "yearTo": null,
+    "yearTo": 1974,
     "provisional": {
       "head": "britain-in-1974"
-    }
+    },
+    "publicTitle": "Crisis Year 1974"
   },
   {
     "id": "s_d5605bd958",
@@ -752,11 +803,12 @@
       "ep_7abcbc25ab",
       "ep_78f2c8775d"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1865,
+    "yearTo": 1865,
     "provisional": {
       "head": "the-assassination-of-abraham-lincoln"
-    }
+    },
+    "publicTitle": "The Lincoln Assassination: Final Days"
   },
   {
     "id": "s_d823f8b4c9",
@@ -767,11 +819,12 @@
       "ep_1357f5cdbd",
       "ep_bd98422bc1"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1916,
+    "yearTo": 1921,
     "provisional": {
       "head": "the-irish-war-of-independence"
-    }
+    },
+    "publicTitle": "The Irish War of Independence: From Rising to Treaty"
   },
   {
     "id": "s_dad4057ea6",
@@ -782,11 +835,12 @@
       "ep_82f5da1876",
       "ep_9f64795150"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -27,
+    "yearTo": 54,
     "provisional": {
       "head": "emperors-of-rome"
-    }
+    },
+    "publicTitle": "Emperors of Rome: First Caesars"
   },
   {
     "id": "s_dd11ac390a",
@@ -797,11 +851,12 @@
       "ep_507f54bb4e",
       "ep_374c77ae43"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1900,
+    "yearTo": 1914,
     "provisional": {
       "head": "the-murder-of-franz-ferdinand"
-    }
+    },
+    "publicTitle": "Franz Ferdinand: Sarajevo to War"
   },
   {
     "id": "s_df07186e48",
@@ -814,7 +869,8 @@
     "yearTo": null,
     "provisional": {
       "head": "young-churchill"
-    }
+    },
+    "publicTitle": "Young Churchill: Ventures and Escapes"
   },
   {
     "id": "s_df74a032c7",
@@ -823,11 +879,12 @@
       "ep_a8516dc195",
       "ep_16ecd05740"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -900,
+    "yearTo": -101,
     "provisional": {
       "head": "ancient-carthage"
-    }
+    },
+    "publicTitle": "Ancient Carthage: Rise and Ruin"
   },
   {
     "id": "s_e1f78bfbcd",
@@ -836,11 +893,12 @@
       "ep_7a0199dd16",
       "ep_fb2e5ba3da"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": -390,
+    "yearTo": -250,
     "provisional": {
       "head": "carthage-vs-rome"
-    }
+    },
+    "publicTitle": "Empires on the Edge: Rome's Rise, Carthage's Shadow"
   },
   {
     "id": "s_e5edf8f477",
@@ -853,7 +911,8 @@
     "yearTo": null,
     "provisional": {
       "head": "alfred-the-great"
-    }
+    },
+    "publicTitle": "Alfred the Great: Viking Wars and Reign"
   },
   {
     "id": "s_e8cee35609",
@@ -864,11 +923,12 @@
       "ep_936d480d28",
       "ep_8676d13536"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1809,
+    "yearTo": 1816,
     "provisional": {
       "head": "lord-byron"
-    }
+    },
+    "publicTitle": "Lord Byron: A Dark Romantic Odyssey"
   },
   {
     "id": "s_eb37e097a1",
@@ -879,11 +939,12 @@
       "ep_05357b5336",
       "ep_536a946a77"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1707,
+    "yearTo": 1707,
     "provisional": {
       "head": "the-great-northern-war"
-    }
+    },
+    "publicTitle": "Baltic to Poltava: A Northern War Chronicle"
   },
   {
     "id": "s_ebeebada12",
@@ -893,11 +954,12 @@
       "ep_f3c3b410a5",
       "ep_58a1bd6e2e"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1938,
+    "yearTo": 1939,
     "provisional": {
       "head": "hitler-s-war-on-poland"
-    }
+    },
+    "publicTitle": "Poland 1938–39: Prelude to World War II"
   },
   {
     "id": "s_edbdd3898c",
@@ -912,7 +974,8 @@
     "yearTo": null,
     "provisional": {
       "head": "the-medici"
-    }
+    },
+    "publicTitle": "The Medici: Rise and Fall of Renaissance Florence"
   },
   {
     "id": "s_f448b4e0f2",
@@ -924,10 +987,11 @@
       "ep_ecc56badfc"
     ],
     "yearFrom": null,
-    "yearTo": null,
+    "yearTo": 1982,
     "provisional": {
       "head": "the-falklands-war"
-    }
+    },
+    "publicTitle": "The Falklands War: Causes, Clash, Aftermath"
   },
   {
     "id": "s_f58bab5b1f",
@@ -936,11 +1000,12 @@
       "ep_a308afed73",
       "ep_460ca0aea0"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 794,
+    "yearTo": 1185,
     "provisional": {
       "head": "the-golden-age-of-japan"
-    }
+    },
+    "publicTitle": "Heian Japan: Genji and Court Life"
   },
   {
     "id": "s_f597e0a8b3",
@@ -951,11 +1016,12 @@
       "ep_afd9e48afd",
       "ep_622ab84b30"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 216,
+    "yearTo": 264,
     "provisional": {
       "head": "hannibal"
-    }
+    },
+    "publicTitle": "Hannibal: Rise of Carthage and Cannae"
   },
   {
     "id": "s_f7807ed093",
@@ -969,10 +1035,11 @@
       "ep_3dcad24715",
       "ep_e7a362df4d"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1928,
+    "yearTo": 1938,
     "provisional": {
       "head": "the-nazis-in-power"
-    }
+    },
+    "publicTitle": "Rise of the Nazi State"
   }
 ]
