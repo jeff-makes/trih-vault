@@ -1,6 +1,7 @@
 import {
   extractPart,
   kebabCase,
+  normalizeTitle,
   readJsonFile,
   seriesStem,
   toTitleCase,
@@ -29,24 +30,32 @@ async function main() {
   const groups = new Map();
 
   for (const episode of episodes) {
+    const title = episode.title ?? '';
+    const rawStem = seriesStem(title);
+    const fallbackStem = normalizeTitle(title || episode.id || '');
+    const stemKey = rawStem || fallbackStem.toLowerCase() || (episode.id ?? '').toLowerCase();
+    const labelStem = rawStem || fallbackStem || episode.id || '';
+    const seriesIdBase = kebabCase(labelStem || episode.id || '');
+    const seriesId = seriesIdBase || kebabCase(episode.id ?? '') || (episode.id ?? '').toLowerCase();
     const partFromEpisode = typeof episode.part === 'number' ? episode.part : null;
-    const partFromTitle = extractPart(episode.title ?? '');
+    const partFromTitle = extractPart(title);
     const part = partFromEpisode ?? partFromTitle ?? null;
-    const rawStem = seriesStem(episode.title ?? episode.id ?? '');
-    const safeStem = rawStem || (episode.title ?? '').trim().toLowerCase() || episode.id.toLowerCase();
-    const seriesIdBase = kebabCase(rawStem || episode.title || episode.id);
-    const seriesId = seriesIdBase || kebabCase(episode.id) || episode.id.toLowerCase();
-    if (!groups.has(safeStem)) {
-      groups.set(safeStem, {
-        rawStem: rawStem || safeStem,
+    const numericEpisode = typeof episode.itunesEpisode === 'number' && Number.isFinite(episode.itunesEpisode)
+      ? episode.itunesEpisode
+      : null;
+    const fallbackSort = parseEpisodeNumber(episode.id);
+    if (!groups.has(stemKey)) {
+      groups.set(stemKey, {
+        rawStem: labelStem || stemKey,
         seriesId,
         entries: [],
       });
     }
-    groups.get(safeStem).entries.push({
+    groups.get(stemKey).entries.push({
       episode,
       part,
-      sortValue: parseEpisodeNumber(episode.id),
+      numericEpisode,
+      sortValue: fallbackSort,
     });
   }
 
@@ -59,6 +68,11 @@ async function main() {
 
   for (const group of groups.values()) {
     group.entries.sort((a, b) => {
+      const aEpisode = a.numericEpisode ?? Number.MAX_SAFE_INTEGER;
+      const bEpisode = b.numericEpisode ?? Number.MAX_SAFE_INTEGER;
+      if (aEpisode !== bEpisode) {
+        return aEpisode - bEpisode;
+      }
       if (a.sortValue !== b.sortValue) {
         return a.sortValue - b.sortValue;
       }
@@ -74,6 +88,7 @@ async function main() {
     if (hasParts) {
       multiCount += 1;
       const episodeIds = group.entries.map((entry) => entry.episode.id);
+      const seriesSortValue = group.entries[0]?.numericEpisode ?? group.entries[0]?.sortValue ?? Number.MAX_SAFE_INTEGER;
       multiSeriesRecords.push({
         series: {
           id: group.seriesId,
@@ -83,7 +98,7 @@ async function main() {
           yearFrom: null,
           yearTo: null,
         },
-        sortValue: group.entries[0]?.sortValue ?? Number.MAX_SAFE_INTEGER,
+        sortValue: seriesSortValue,
       });
       topicsRecords.push({
         topic: {
@@ -91,7 +106,7 @@ async function main() {
           title: stemTitle,
           seriesIds: [group.seriesId],
         },
-        sortValue: group.entries[0]?.sortValue ?? Number.MAX_SAFE_INTEGER,
+        sortValue: seriesSortValue,
       });
       for (const entry of group.entries) {
         const updated = {

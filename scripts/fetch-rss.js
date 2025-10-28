@@ -41,7 +41,7 @@ function extractAttribute(block, tag, attribute) {
 function parseItems(xml) {
   const itemMatches = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) ?? [];
   return itemMatches.map((itemXml) => {
-    const title = decodeHtml(extractTag(itemXml, 'title'));
+    const title = decodeHtml(extractTag(itemXml, 'itunes:title') ?? extractTag(itemXml, 'title'));
     const description = decodeHtml(extractTag(itemXml, 'content:encoded') ?? extractTag(itemXml, 'description'));
     const pubDate = decodeHtml(extractTag(itemXml, 'pubDate'));
     const guid = decodeHtml(extractTag(itemXml, 'guid'));
@@ -81,6 +81,7 @@ async function main() {
 
   const existingEpisodes = await readJsonFile('public/episodes.json', []);
   const existingById = new Map(existingEpisodes.map((episode) => [episode.id, episode]));
+  const totalBefore = existingEpisodes.length;
 
   const newEpisodes = [];
 
@@ -110,6 +111,9 @@ async function main() {
       description,
       audioUrl,
     };
+    if (itunesEpisode !== null && Number.isFinite(itunesEpisode)) {
+      episode.itunesEpisode = itunesEpisode;
+    }
     if (typeof part === 'number') {
       episode.part = part;
     }
@@ -125,7 +129,7 @@ async function main() {
 
   const merged = [...existingEpisodes, ...newEpisodes];
   await writeJsonFile('public/episodes.json', merged);
-  console.log(`Appended ${newEpisodes.length} episode(s).`);
+  console.log(`Appended ${newEpisodes.length} episode(s); total is now ${totalBefore + newEpisodes.length}.`);
 }
 
 main().catch((error) => {
