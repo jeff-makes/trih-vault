@@ -1,7 +1,7 @@
 [
   {
     "id": "s_043473363e",
-    "title": "China And World War Ii",
+    "title": "China And World War II",
     "episodeIds": [
       "ep_d75733229f",
       "ep_04d1e513e1"
@@ -121,7 +121,7 @@
       "ep_a70296b368",
       "ep_fd64f235db"
     ],
-    "yearFrom": null,
+    "yearFrom": 1015,
     "yearTo": 1066,
     "provisional": {
       "head": "the-last-viking"
@@ -138,8 +138,8 @@
       "ep_235a1eccde",
       "ep_bdbf88b210"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1919,
+    "yearTo": 1952,
     "provisional": {
       "head": "evita"
     },
@@ -154,8 +154,8 @@
       "ep_77dc001c12",
       "ep_8cf4ff92c7"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 750,
+    "yearTo": 900,
     "provisional": {
       "head": "baghdad"
     },
@@ -252,7 +252,7 @@
       "ep_8b26b99b9a",
       "ep_037c4d5040"
     ],
-    "yearFrom": 1901,
+    "yearFrom": null,
     "yearTo": null,
     "provisional": {
       "head": "australian-prime-ministers"
@@ -369,13 +369,13 @@
   },
   {
     "id": "s_7dc56b1fbc",
-    "title": "Queen Elizabeth Ii",
+    "title": "Queen Elizabeth II",
     "episodeIds": [
       "ep_fe2ddb481b",
       "ep_c7cc352580"
     ],
     "yearFrom": 1952,
-    "yearTo": null,
+    "yearTo": 2022,
     "provisional": {
       "head": "queen-elizabeth-ii"
     },
@@ -447,8 +447,8 @@
       "ep_477ac33f45",
       "ep_e69bbbfbf8"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1960,
+    "yearTo": 1969,
     "provisional": {
       "head": "sixties-fashion"
     },
@@ -617,8 +617,8 @@
       "ep_2b85f6c071",
       "ep_6070b6788b"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1972,
+    "yearTo": 1972,
     "provisional": {
       "head": "watergate"
     },
@@ -651,8 +651,8 @@
       "ep_855df79bc1",
       "ep_55ffaeccad"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1682,
+    "yearTo": 1725,
     "provisional": {
       "head": "peter-the-great"
     },
@@ -680,7 +680,7 @@
       "ep_7c0fa8401c",
       "ep_182a23ebe7"
     ],
-    "yearFrom": null,
+    "yearFrom": 1870,
     "yearTo": 1885,
     "provisional": {
       "head": "horror-in-the-congo"
@@ -709,8 +709,8 @@
       "ep_da27c1b403",
       "ep_75e798b69c"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1805,
+    "yearTo": 1805,
     "provisional": {
       "head": "trafalgar"
     },
@@ -757,8 +757,8 @@
       "ep_dca9dd9bae",
       "ep_af66b5845a"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1769,
+    "yearTo": 1797,
     "provisional": {
       "head": "young-napoleon"
     },
@@ -789,7 +789,7 @@
       "ep_07ff472879",
       "ep_d9c82b05f4"
     ],
-    "yearFrom": null,
+    "yearFrom": 1974,
     "yearTo": 1974,
     "provisional": {
       "head": "britain-in-1974"
@@ -865,8 +865,8 @@
       "ep_58a81aa0c5",
       "ep_91d5229253"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1874,
+    "yearTo": 1900,
     "provisional": {
       "head": "young-churchill"
     },
@@ -907,8 +907,8 @@
       "ep_9a2165ce34",
       "ep_618789146a"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 853,
+    "yearTo": 899,
     "provisional": {
       "head": "alfred-the-great"
     },
@@ -970,8 +970,8 @@
       "ep_14bfadaf5a",
       "ep_aceb479bab"
     ],
-    "yearFrom": null,
-    "yearTo": null,
+    "yearFrom": 1400,
+    "yearTo": 1498,
     "provisional": {
       "head": "the-medici"
     },
@@ -986,7 +986,7 @@
       "ep_58039b6cd4",
       "ep_ecc56badfc"
     ],
-    "yearFrom": null,
+    "yearFrom": 1976,
     "yearTo": 1982,
     "provisional": {
       "head": "the-falklands-war"
