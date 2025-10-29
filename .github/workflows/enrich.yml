@@ -33,13 +33,27 @@ jobs:
       - name: Fetch RSS
         run: npm run fetch
 
-      - name: Enrich metadata
-        run: npm run enrich
+      - name: Build series
+        run: npm run build:series
 
-      - name: LLM Enrich (series + episodes)
-        run: npm run llm:enrich
+      - name: Compose datasets (pre-LLM)
+        run: npm run compose
+
+      - name: LLM Enrich Episodes
+        run: npm run llm:episodes
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: LLM Enrich Series
+        run: npm run llm:series
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Compose datasets (post-LLM)
+        run: npm run compose
+
+      - name: Build topics
+        run: npm run topics
 
       - name: Validate outputs
         run: npm run validate

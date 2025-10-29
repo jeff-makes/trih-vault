@@ -7,9 +7,12 @@
     "fetch": "node scripts/fetch-rss.js",
     "enrich": "node scripts/enrich.js && node scripts/topics-enrich.js",
     "llm:enrich": "node scripts/llm-enrich.js",
+    "llm:episodes": "tsx scripts/llm/episodes.ts",
+    "llm:series": "tsx scripts/llm/series.ts",
     "validate": "node scripts/validate.js",
     "build:series": "PATH=\"./scripts/bin:$PATH\" tsx scripts/enrich/series-build.ts",
     "compose": "node --import ./scripts/register-ts-loader.mjs scripts/enrich/compose.ts",
+    "topics": "tsx scripts/enrich/topics.ts",
     "migrate:seed-enrichment": "node --import ./scripts/register-ts-loader.mjs scripts/migrations/seed-enrichment-from-public.ts"
   },
   "dependencies": {
