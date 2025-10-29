@@ -6,10 +6,9 @@ async function main() {
   const topics = await readJsonFile('public/topics.json', []);
 
   const errors = [];
+  const topicsArray = Array.isArray(topics) ? topics : [];
   if (!Array.isArray(topics)) {
     errors.push('topics.json must contain an array');
-  } else if (topics.length !== 0) {
-    errors.push('topics.json must remain empty');
   }
   const episodesById = new Map();
   for (const episode of episodes) {
@@ -112,6 +111,72 @@ async function main() {
       }
       if (!partsInSeries.add(episode.part)) {
         errors.push(`Series ${label} repeats part number ${episode.part}`);
+      }
+    }
+  }
+
+  if (Array.isArray(topics)) {
+    const topicsById = new Map();
+    for (const topic of topicsArray) {
+      const label = typeof topic?.id === 'string' && topic.id ? topic.id : '<missing id>';
+      if (typeof topic !== 'object' || topic === null) {
+        errors.push('Topic entry must be an object');
+        continue;
+      }
+
+      if (typeof topic.id !== 'string' || topic.id.trim() === '') {
+        errors.push('Topic missing valid id');
+      } else {
+        if (!topic.id.startsWith('t_')) {
+          errors.push(`Topic ${label} id must start with t_`);
+        }
+        if (topicsById.has(topic.id)) {
+          errors.push(`Topic duplicate id: ${topic.id}`);
+        } else {
+          topicsById.set(topic.id, topic);
+        }
+      }
+
+      if (typeof topic.title !== 'string' || topic.title.trim() === '') {
+        errors.push(`Topic ${label} missing title`);
+      }
+
+      if (!Array.isArray(topic.seriesIds)) {
+        errors.push(`Topic ${label} missing seriesIds array`);
+      } else if (topic.seriesIds.length < 2) {
+        errors.push(`Topic ${label} must reference at least two series`);
+      } else {
+        const seenSeries = new Set();
+        for (const seriesId of topic.seriesIds) {
+          if (typeof seriesId !== 'string' || seriesId.trim() === '') {
+            errors.push(`Topic ${label} has invalid series id ${seriesId}`);
+            continue;
+          }
+          if (!seenSeries.add(seriesId)) {
+            errors.push(`Topic ${label} repeats series id ${seriesId}`);
+          }
+          if (!seriesById.has(seriesId)) {
+            errors.push(`Topic ${label} references missing series ${seriesId}`);
+          }
+        }
+      }
+
+      if (topic.yearFrom !== null && topic.yearFrom !== undefined) {
+        if (typeof topic.yearFrom !== 'number' || !Number.isFinite(topic.yearFrom)) {
+          errors.push(`Topic ${label} has invalid yearFrom ${topic.yearFrom}`);
+        }
+      }
+      if (topic.yearTo !== null && topic.yearTo !== undefined) {
+        if (typeof topic.yearTo !== 'number' || !Number.isFinite(topic.yearTo)) {
+          errors.push(`Topic ${label} has invalid yearTo ${topic.yearTo}`);
+        }
+      }
+      if (typeof topic.yearFrom === 'number' && typeof topic.yearTo === 'number' && topic.yearFrom > topic.yearTo) {
+        errors.push(`Topic ${label} has invalid year range ${topic.yearFrom} > ${topic.yearTo}`);
+      }
+
+      if (typeof topic.enrichmentFingerprint !== 'string' || topic.enrichmentFingerprint.trim() === '') {
+        errors.push(`Topic ${label} missing enrichmentFingerprint`);
       }
     }
   }
