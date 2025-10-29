@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import OpenAI from "openai";
-import { epFingerprint } from "./fingerprints.ts";
+import { epFingerprint } from "./fingerprints.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -14,38 +14,12 @@ const EPISODE_USER_TEMPLATE = `EPISODE\nTitle: {{title}}\nDescription (HTML poss
 
 const MAX_ATTEMPTS = 3;
 
-type Episode = {
-  id: string;
-  title?: string | null;
-  description?: string | null;
-};
-
-type EpisodeEnrichment = {
-  yearFrom: number | null;
-  yearTo: number | null;
-  keyPeople: string[];
-  keyPlaces: string[];
-  keyBattles: string[];
-  keyDates: string[];
-  organizations: string[];
-  themes: string[];
-  confidence: number;
-};
-
-type EpisodeCacheEntry = EpisodeEnrichment & {
-  lastEnrichedAt?: string;
-  enrichmentFingerprint: string;
-  [key: string]: unknown;
-};
-
-type EpisodeCache = Record<string, EpisodeCacheEntry>;
-
-async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
+async function readJson(relativePath, fallback) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   try {
     const raw = await fs.readFile(fullPath, "utf8");
-    return JSON.parse(raw) as T;
-  } catch (error: any) {
+    return JSON.parse(raw);
+  } catch (error) {
     if (error?.code === "ENOENT") {
       return fallback;
     }
@@ -53,14 +27,14 @@ async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
   }
 }
 
-async function writeJsonIfChanged(relativePath: string, value: unknown): Promise<void> {
+async function writeJsonIfChanged(relativePath, value) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   await fs.mkdir(path.dirname(fullPath), { recursive: true });
   const next = JSON.stringify(value, null, 2) + "\n";
   let previous = "";
   try {
     previous = await fs.readFile(fullPath, "utf8");
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code !== "ENOENT") {
       throw error;
     }
@@ -70,7 +44,7 @@ async function writeJsonIfChanged(relativePath: string, value: unknown): Promise
   }
 }
 
-function stripHtml(input: string | null | undefined): string {
+function stripHtml(input) {
   if (!input) {
     return "";
   }
@@ -85,7 +59,7 @@ function stripHtml(input: string | null | undefined): string {
     .trim();
 }
 
-function sanitizeYear(value: unknown): number | null {
+function sanitizeYear(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return null;
   }
@@ -96,7 +70,7 @@ function sanitizeYear(value: unknown): number | null {
   return normalized;
 }
 
-function sanitizeConfidence(value: unknown): number {
+function sanitizeConfidence(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return 0;
   }
@@ -105,12 +79,12 @@ function sanitizeConfidence(value: unknown): number {
   return Number(value.toFixed(6));
 }
 
-function sanitizeStringArray(value: unknown): string[] {
+function sanitizeStringArray(value) {
   if (!Array.isArray(value)) {
     return [];
   }
-  const seen = new Set<string>();
-  const results: string[] = [];
+  const seen = new Set();
+  const results = [];
   for (const entry of value) {
     if (typeof entry !== "string") continue;
     const trimmed = entry.trim();
@@ -121,7 +95,7 @@ function sanitizeStringArray(value: unknown): string[] {
   return results;
 }
 
-function formatEpisodePrompt(episode: Episode, withReminder = false): string {
+function formatEpisodePrompt(episode, withReminder = false) {
   const base = EPISODE_USER_TEMPLATE
     .replace("{{title}}", episode.title ?? "")
     .replace("{{description}}", stripHtml(episode.description ?? ""));
@@ -131,7 +105,7 @@ function formatEpisodePrompt(episode: Episode, withReminder = false): string {
   return base;
 }
 
-function safeParseJson(payload: string): any | null {
+function safeParseJson(payload) {
   try {
     return JSON.parse(payload);
   } catch (error) {
@@ -149,7 +123,7 @@ function safeParseJson(payload: string): any | null {
   }
 }
 
-function sanitizeEpisodeEnrichment(raw: any): EpisodeEnrichment {
+function sanitizeEpisodeEnrichment(raw) {
   return {
     yearFrom: sanitizeYear(raw?.yearFrom),
     yearTo: sanitizeYear(raw?.yearTo),
@@ -163,14 +137,14 @@ function sanitizeEpisodeEnrichment(raw: any): EpisodeEnrichment {
   };
 }
 
-function entriesEqual(a: EpisodeCacheEntry | undefined, b: EpisodeCacheEntry): boolean {
+function entriesEqual(a, b) {
   if (!a) {
     return false;
   }
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-async function requestEpisodeEnrichment(openai: OpenAI, episode: Episode, attempt = 0): Promise<EpisodeEnrichment> {
+async function requestEpisodeEnrichment(openai, episode, attempt = 0) {
   const response = await openai.chat.completions.create({
     model: "gpt-5-nano",
     messages: [
@@ -192,7 +166,7 @@ async function requestEpisodeEnrichment(openai: OpenAI, episode: Episode, attemp
   throw new Error(`Failed to parse enrichment for episode ${episode.id}`);
 }
 
-async function main(): Promise<void> {
+async function main() {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.error("Missing OPENAI_API_KEY environment variable.");
@@ -200,14 +174,14 @@ async function main(): Promise<void> {
     return;
   }
 
-  const episodes = await readJson<Episode[]>("public/episodes.raw.json", []);
+  const episodes = await readJson("public/episodes.raw.json", []);
   if (!Array.isArray(episodes) || episodes.length === 0) {
     console.log("No episodes found. Skipping episode enrichment.");
     return;
   }
 
-  const cache = await readJson<EpisodeCache>("data/episode-enrichment.json", {});
-  const nextCache: EpisodeCache = { ...cache };
+  const cache = await readJson("data/episode-enrichment.json", {});
+  const nextCache = { ...cache };
   const openai = new OpenAI({ apiKey });
   const nowIso = new Date().toISOString();
 
@@ -235,7 +209,7 @@ async function main(): Promise<void> {
     const existing = cache[episode.id];
     console.log(`Enriching episode ${episode.id} (${episode.title ?? "untitled"})`);
     const enrichment = await requestEpisodeEnrichment(openai, episode);
-    const entry: EpisodeCacheEntry = {
+    const entry = {
       ...(existing ?? {}),
       ...enrichment,
       lastEnrichedAt: nowIso,

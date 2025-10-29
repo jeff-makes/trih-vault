@@ -1,36 +1,18 @@
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { stableHash } from "../../lib/hash.ts";
+import { stableHash } from "../../lib/hash.mjs";
 import { slugify } from "../utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
 
-type SeriesEntry = {
-  id: string;
-  title?: string | null;
-  publicTitle?: string | null;
-  yearFrom?: number | null;
-  yearTo?: number | null;
-};
-
-type TopicEntry = {
-  id: string;
-  title: string;
-  seriesIds: string[];
-  yearFrom: number | null;
-  yearTo: number | null;
-  enrichmentFingerprint: string;
-  [key: string]: unknown;
-};
-
-async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
+async function readJson(relativePath, fallback) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   try {
     const raw = await fs.readFile(fullPath, "utf8");
-    return JSON.parse(raw) as T;
-  } catch (error: any) {
+    return JSON.parse(raw);
+  } catch (error) {
     if (error?.code === "ENOENT") {
       return fallback;
     }
@@ -38,14 +20,14 @@ async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
   }
 }
 
-async function writeJsonIfChanged(relativePath: string, value: unknown): Promise<void> {
+async function writeJsonIfChanged(relativePath, value) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   await fs.mkdir(path.dirname(fullPath), { recursive: true });
   const next = JSON.stringify(value, null, 2) + "\n";
   let previous = "";
   try {
     previous = await fs.readFile(fullPath, "utf8");
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code !== "ENOENT") {
       throw error;
     }
@@ -55,7 +37,7 @@ async function writeJsonIfChanged(relativePath: string, value: unknown): Promise
   }
 }
 
-function normalizeForGrouping(value: string | null | undefined): string {
+function normalizeForGrouping(value) {
   if (!value) {
     return "";
   }
@@ -72,7 +54,7 @@ function normalizeForGrouping(value: string | null | undefined): string {
     .trim();
 }
 
-function sanitizeYear(value: unknown): number | null {
+function sanitizeYear(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return null;
   }
@@ -83,7 +65,7 @@ function sanitizeYear(value: unknown): number | null {
   return normalized;
 }
 
-function pickDisplayTitle(seriesList: SeriesEntry[], normalizedKey: string): string {
+function pickDisplayTitle(seriesList, normalizedKey) {
   const publicTitles = seriesList
     .map((series) => (typeof series.publicTitle === "string" ? series.publicTitle.trim() : ""))
     .filter(Boolean)
@@ -107,7 +89,7 @@ function pickDisplayTitle(seriesList: SeriesEntry[], normalizedKey: string): str
     .join(" ");
 }
 
-function buildTopic(seriesList: SeriesEntry[], normalizedKey: string): TopicEntry | null {
+function buildTopic(seriesList, normalizedKey) {
   if (seriesList.length < 2) {
     return null;
   }
@@ -126,8 +108,8 @@ function buildTopic(seriesList: SeriesEntry[], normalizedKey: string): TopicEntr
     return null;
   }
 
-  let yearFrom: number | null = null;
-  let yearTo: number | null = null;
+  let yearFrom = null;
+  let yearTo = null;
 
   for (const series of seriesList) {
     const from = sanitizeYear(series.yearFrom);
@@ -153,25 +135,25 @@ function buildTopic(seriesList: SeriesEntry[], normalizedKey: string): TopicEntr
   };
 }
 
-function entriesEqual(a: TopicEntry | undefined, b: TopicEntry): boolean {
+function entriesEqual(a, b) {
   if (!a) {
     return false;
   }
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-async function main(): Promise<void> {
-  const series = await readJson<SeriesEntry[]>("public/series.json", []);
+async function main() {
+  const series = await readJson("public/series.json", []);
   if (!Array.isArray(series) || series.length === 0) {
     console.log("No series available. Skipping topics build.");
     return;
   }
 
-  const existingTopics = await readJson<TopicEntry[]>("public/topics.json", []);
+  const existingTopics = await readJson("public/topics.json", []);
   const existingById = new Map(existingTopics.map((topic) => [topic.id, topic]));
   const nextTopics = new Map(existingTopics.map((topic) => [topic.id, topic]));
 
-  const groups = new Map<string, SeriesEntry[]>();
+  const groups = new Map();
 
   for (const entry of series) {
     if (!entry || typeof entry !== "object" || typeof entry.id !== "string") {
@@ -184,7 +166,7 @@ async function main(): Promise<void> {
     if (!groups.has(normalizedTitle)) {
       groups.set(normalizedTitle, []);
     }
-    groups.get(normalizedTitle)!.push(entry);
+    groups.get(normalizedTitle).push(entry);
   }
 
   let mutated = false;
@@ -195,7 +177,7 @@ async function main(): Promise<void> {
       continue;
     }
     const existing = existingById.get(topic.id);
-    const merged: TopicEntry = { ...(existing ?? {}), ...topic };
+    const merged = { ...(existing ?? {}), ...topic };
     if (!entriesEqual(existing, merged)) {
       mutated = true;
       nextTopics.set(topic.id, merged);

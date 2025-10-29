@@ -1,2 +1,0 @@
-#!/bin/sh
-node --import ./scripts/register-ts-loader.mjs "$@"

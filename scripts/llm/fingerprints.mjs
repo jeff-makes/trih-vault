@@ -1,4 +1,4 @@
-import { stableHash } from "../../lib/hash.ts";
+import { stableHash } from "../../lib/hash.mjs";
 
 export function epFingerprint(title, description) {
   return stableHash(`${title}||${description ?? ""}`);
