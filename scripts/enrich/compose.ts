@@ -1,19 +1,115 @@
 import fs from "fs";
 import path from "path";
 
-function read(p: string) {
-  return JSON.parse(fs.readFileSync(p, "utf8"));
-}
-
-function writeIfChanged(p: string, data: any) {
-  const next = JSON.stringify(data, null, 2) + "\n";
-  const prev = fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "";
-  if (prev !== next) fs.writeFileSync(p, next, "utf8");
-}
-
 const root = process.cwd();
-const pub = (f: string) => path.join(root, "public", f);
-const episodes = read(pub("episodes.json"));
-const series = read(pub("series.json"));
-writeIfChanged(pub("episodes.json"), episodes);
-writeIfChanged(pub("series.json"), series);
+const fromPublic = (file) => path.join(root, "public", file);
+const fromData = (file) => path.join(root, "data", file);
+
+function isEnoent(error) {
+  return Boolean(error && typeof error === "object" && error.code === "ENOENT");
+}
+
+function readJson(filePath, fallback) {
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch (error) {
+    if (isEnoent(error)) {
+      return fallback;
+    }
+    throw error;
+  }
+}
+
+function writeJsonIfChanged(filePath, value) {
+  const next = JSON.stringify(value, null, 2) + "\n";
+  const prev = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "";
+  if (prev !== next) {
+    fs.writeFileSync(filePath, next, "utf8");
+  }
+}
+
+function ensureArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function applyEpisodeEnrichment(rawEpisodes, cache) {
+  return rawEpisodes.map((episode) => {
+    const enrichment = cache[episode.id];
+    if (!enrichment || typeof enrichment !== "object") {
+      return { ...episode };
+    }
+    const { enrichmentFingerprint: _skip, ...fields } = enrichment;
+    if (Object.keys(fields).length === 0) {
+      return { ...episode };
+    }
+    return { ...episode, ...fields };
+  });
+}
+
+function applySeriesEnrichment(rawSeries, cache) {
+  return rawSeries.map((item) => {
+    const enrichment = cache[item.id];
+    if (!enrichment || typeof enrichment !== "object") {
+      return { ...item };
+    }
+    const { enrichmentFingerprint: _skip, ...fields } = enrichment;
+    if (Object.keys(fields).length === 0) {
+      return { ...item };
+    }
+    return { ...item, ...fields };
+  });
+}
+
+function parseDateValue(value) {
+  if (typeof value !== "string") {
+    return Number.POSITIVE_INFINITY;
+  }
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return timestamp;
+}
+
+function sortEpisodes(list) {
+  return [...list].sort((a, b) => {
+    const aTime = parseDateValue(a.pubDate);
+    const bTime = parseDateValue(b.pubDate);
+    if (aTime !== bTime) {
+      return aTime - bTime;
+    }
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function sortSeries(list) {
+  return [...list].sort((a, b) => {
+    const aTitle = typeof a.title === "string" ? a.title : "";
+    const bTitle = typeof b.title === "string" ? b.title : "";
+    const titleCompare = aTitle.localeCompare(bTitle, "en", { sensitivity: "base" });
+    if (titleCompare !== 0) {
+      return titleCompare;
+    }
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function main() {
+  const existingEpisodes = readJson(fromPublic("episodes.json"), []);
+  const existingSeries = readJson(fromPublic("series.json"), []);
+
+  const rawEpisodes = readJson(fromPublic("episodes.raw.json"), null) ?? existingEpisodes;
+  const rawSeries = readJson(fromPublic("series.raw.json"), null) ?? existingSeries;
+
+  const episodeCache = readJson(fromData("episode-enrichment.json"), {});
+  const seriesCache = readJson(fromData("series-enrichment.json"), {});
+
+  const enrichedEpisodes = sortEpisodes(applyEpisodeEnrichment(ensureArray(rawEpisodes), episodeCache));
+  const enrichedSeries = sortSeries(applySeriesEnrichment(ensureArray(rawSeries), seriesCache));
+
+  writeJsonIfChanged(fromPublic("episodes.json"), enrichedEpisodes);
+  writeJsonIfChanged(fromPublic("series.json"), enrichedSeries);
+}
+
+main();

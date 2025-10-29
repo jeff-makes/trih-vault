@@ -1,7 +1,9 @@
-import { stableHash } from "../../lib/hash";
-export function epFingerprint(title: string, description?: string) {
+import { stableHash } from "../../lib/hash.ts";
+
+export function epFingerprint(title, description) {
   return stableHash(`${title}||${description ?? ""}`);
 }
-export function seriesFingerprint(baseTitle: string, childTitles: string[]) {
+
+export function seriesFingerprint(baseTitle, childTitles) {
   return stableHash(`${baseTitle}|${[...childTitles].join("|")}`);
 }

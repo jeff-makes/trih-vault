@@ -8,7 +8,8 @@
     "enrich": "node scripts/enrich.js && node scripts/topics-enrich.js",
     "llm:enrich": "node scripts/llm-enrich.js",
     "validate": "node scripts/validate.js",
-    "compose": "tsx scripts/enrich/compose.ts"
+    "compose": "node --import ./scripts/register-ts-loader.mjs scripts/enrich/compose.ts",
+    "migrate:seed-enrichment": "node --import ./scripts/register-ts-loader.mjs scripts/migrations/seed-enrichment-from-public.ts"
   },
   "dependencies": {
     "openai": "file:vendor/openai"
