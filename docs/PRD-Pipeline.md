@@ -26,7 +26,7 @@ Deliver a deterministic, append-only data pipeline that ingests *The Rest Is His
 ### 4.1 Conventions & Identifiers
 - **Canonical IDs**
   - `episodeId` = normalised RSS `<guid>` string. Persist the raw RSS GUID under `source.guid` for traceability.
-  - `seriesId` = `slug(seriesKey) + "-" + firstPubYYYYMMDD` for the arc. This ID MUST be stable across reruns and cannot be reused for a different arc.
+  - `seriesId` = `toSlug(seriesKey) + "-" + firstPubYYYYMMDD` for the arc (see §22). This ID MUST be stable across reruns and cannot be reused for a different arc.
 - **Source mapping** — Every episode retains `source` metadata:
   - `source.guid` (string, required)
   - `source.itunesEpisode` (number \| null, required, mirror the RSS value; null when absent)
@@ -240,9 +240,14 @@ Explicit field inventories for each artefact:
   - [`schema/episode.public.schema.json`](../schema/episode.public.schema.json)
   - [`schema/series.public.schema.json`](../schema/series.public.schema.json)
   - [`schema/cache.llm.schema.json`](../schema/cache.llm.schema.json)
-- Schemas must explicitly type every field above, including enum restrictions and `number \| null` variants for year fields.
-- All public JSON artefacts (`public/episodes.json`, `public/series.json`) and cache files (`data/episodes-llm.json`, `data/series-llm.json`) MUST validate against the appropriate schema via `scripts/validate.js` using AJV.
+- Schemas must include `$schema` and `$id` properties, explicitly type every field above, and declare enum restrictions and `number \| null` variants for year fields.
+- All public JSON artefacts (`public/episodes.json`, `public/series.json`) and cache files (`data/episodes-llm.json`, `data/series-llm.json`) MUST validate against the appropriate schema via `scripts/validate.js` using AJV configured with `{ allErrors: true, allowUnionTypes: true }`.
+- Provide an `npm run schema:check` script that validates every golden sample file and the current `public/*.json` artefacts against their schemas.
 - Schema evolution must remain backwards compatible; coordinate breaking changes with consumer version bumps.
+
+### 4.4 Deterministic Serialization
+- Introduce a `stableStringify.ts` helper that serialises JSON objects with keys sorted alphabetically.
+- All persisted artefacts must use this helper (directly or via shared utilities) to guarantee byte-for-byte stability across runs.
 
 ## 5. Fingerprints & Cleanup Versioning
 ### 5.1 Episode Fingerprint Formula
@@ -260,20 +265,33 @@ seriesFingerprint = sha256("srfp:v1\n" + seriesId + "\n" + memberEpisodeFingerpr
 Deterministic cleanup utilities (see §11.3) MUST align with the structured extraction rules below to ensure idempotent outputs regardless of RSS description changes.
 
 #### 5.3.1 Extraction Logic
-- **Credit Extraction** — Iterate through the normalised description text (post HTML parsing, pre-boilerplate removal) and search for the following key prefixes. When a prefix is encountered at the start of a line (case-sensitive match), capture the text immediately following the prefix until the next newline. Trim whitespace and append the value to the mapped JSON field (creating arrays when multiple values exist).
+- **Credit Extraction** — Iterate through the normalised description text (post HTML parsing, pre-boilerplate removal) and search for the following key prefixes. Before matching:
+  - Convert all dash and colon variants (`:`, `：`, `﹕`, `꞉`, `-`, `–`, `—`) into a single colon character.
+  - Collapse repeated whitespace and trim leading/trailing spaces on each candidate line.
+  - Perform case-insensitive prefix matching so that label capitalisation does not matter.
+  - Treat pluralised labels (suffix `s` or `es`) as equivalent to their singular form.
 
   | Prefix String | Target JSON Field |
   | --- | --- |
   | `Producer:` | `credits.producer` |
+  | `Producers:` | `credits.producer` (plural alias) |
   | `Senior Producer:` | `credits.seniorProducer` |
+  | `Senior Producers:` | `credits.seniorProducer` (plural alias) |
   | `Exec Producer:` | `credits.execProducer` |
-  | `Executive Producer:` | `credits.execProducer` (alias) |
+  | `Executive Producer:` | `credits.execProducer` |
+  | `Exec Producers:` | `credits.execProducer` (plural alias) |
+  | `Executive Producers:` | `credits.execProducer` (alias) |
   | `Researcher:` | `credits.researcher` |
+  | `Researchers:` | `credits.researcher` (plural alias) |
   | `Assistant Producer:` | `credits.assistantProducer` |
+  | `Assistant Producers:` | `credits.assistantProducer` (plural alias) |
   | `Editor:` | `credits.editor` |
+  | `Editors:` | `credits.editor` (plural alias) |
   | `Sound Design:` | `credits.soundDesign` |
+  | `Sound Designer:` | `credits.soundDesign` (alias) |
+  | `Sound Designers:` | `credits.soundDesign` (plural alias) |
 
-  Normalise em dashes/colon variants to a colon before matching, and collapse multiple spaces inside the captured name.
+  Normalise em/en dashes and colon variants before matching, collapse multiple spaces inside the captured name, and preserve the exact casing from the source for the stored value. Document this alias table in the repository to aid future updates.
 
 - **Boilerplate Removal** — Evaluate each element in `descriptionBlocks` after splitting on double newlines. Drop the entire block if it contains any of the substrings listed below (case-insensitive substring match). Preserve ordering of the remaining blocks.
 
@@ -290,14 +308,20 @@ Deterministic cleanup utilities (see §11.3) MUST align with the structured extr
   - `Buy tickets`
   - `Sign up to our newsletter`
 
-### 5.4 Cleanup Version Constant
+### 5.4 Fingerprint & Hashing Guarantees
+- All fingerprint and hash inputs MUST be encoded as UTF-8 bytes before hashing.
+- Normalise line endings in every input string to the Unix newline (`\n`) prior to hashing.
+- Use the SHA-256 algorithm and emit lower-case hexadecimal digests for all fingerprints.
+- String literals embedded in the formulas (e.g., `"epfp:v1\n"`) must not include an implicit trailing newline unless explicitly shown in the formula definition.
+
+### 5.5 Cleanup Version Constant
 `CLEANUP_VERSION` is a constant (initially `1`) defined alongside the cleanup helpers. Increment the version whenever deterministic cleanup behaviour changes; doing so invalidates caches intentionally.
 
-### 5.5 LLM Enrichment
+### 5.6 LLM Enrichment
 LLM enrichment prompts (see §11.5) must remain versioned assets so cached responses can be invalidated deterministically when prompt semantics change.
 
-#### 5.5.1 LLM Prompt Definitions
-##### 5.5.1.1 Episode Enrichment Prompt
+#### 5.6.1 LLM Prompt Definitions
+##### 5.6.1.1 Episode Enrichment Prompt
 **System Message / Persona:**
 
 ```
@@ -313,7 +337,7 @@ Synopsis: {{cleanDescriptionText}}
 From the text provided, perform the following tasks:
 Identify key historical figures mentioned. Do NOT include the hosts, Tom Holland and Dominic Sandbrook. Do NOT include producer or staff names mentioned in a credits list.
 Identify key geographical places or locations central to the narrative.
-Infer a numeric year span (yearFrom, yearTo) for the main historical period discussed. If the episode covers multiple distinct periods or no specific historical period (e.g., mythology, ghosts), you MUST return "NA" for both yearFrom and yearTo.
+Infer a numeric year span (yearFrom, yearTo) for the main historical period discussed. If the episode covers multiple distinct periods or no specific historical period (e.g., mythology, ghosts), you MUST return `null` for both yearFrom and yearTo.
 Extract up to five short, key themes or topics that summarize the episode's subject matter.
 Return your analysis ONLY as a single, valid JSON object with the following schema:
 ```json
@@ -321,8 +345,8 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
   "keyPeople": ["string"],
   "keyPlaces": ["string"],
   "keyThemes": ["string"],
-  "yearFrom": "number" | "NA",
-  "yearTo": "number" | "NA"
+  "yearFrom": number | null,
+  "yearTo": number | null
 }
 ```
 Example:
@@ -339,9 +363,19 @@ Expected Output:
   "yearTo": 1805
 }
 ```
+If a span cannot be determined, both `yearFrom` and `yearTo` must be returned as `null`:
+```json
+{
+  "keyPeople": ["Perseus", "Medusa"],
+  "keyPlaces": ["Ancient Greece"],
+  "keyThemes": ["mythology", "heroic-quests", "monsters"],
+  "yearFrom": null,
+  "yearTo": null
+}
+```
 ```
 
-##### 5.5.1.2 Series Enrichment Prompt
+##### 5.6.1.2 Series Enrichment Prompt
 **System Message / Persona:**
 
 ```
@@ -369,10 +403,22 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
 ```
 
 ## 6. Series Key Extraction & Grouping Rules
-- Recognise part indicators with flexible patterns: `Part`, `Pt`, `Pt.`, roman numerals (`I`, `II`, `III`, …), and hyphen/colon variants. Matching is case-insensitive.
+- Recognise part indicators with flexible patterns: `Part`, `Pt`, `Pt.`, and roman numerals. Matching is case-insensitive and honours the parsing logic in §6.2.
 - When ambiguity remains, still assign a `seriesId` but set `seriesGroupingConfidence = "low"` and persist `seriesKeyRaw`.
-- Normalise `seriesKey` by trimming whitespace, collapsing repeated separators, and downcasing when generating the slug for `seriesId`.
+- Normalise `seriesKey` by trimming whitespace, collapsing repeated separators, and downcasing before passing to `toSlug` (see §22) when generating the slug component of `seriesId`.
 - `seriesId` MUST remain stable across reruns and cannot be reused for a different arc.
+
+### 6.1 Arc Boundary Logic
+- An arc begins at the first episode in publication order whose title contains a recognised part token where the part number resolves to `1` after parsing.
+- Once an arc starts, include subsequent episodes only while:
+  - Publication dates remain contiguous, allowing a maximum 14-day gap between episodes, **and**
+  - The normalised `seriesKey` matches the starter episode.
+- The arc ends immediately when either contiguity breaks or the `seriesKey` changes. If the same `seriesKey` reappears later, it MUST start a new `seriesId` computed via the slugging rules.
+
+### 6.2 Part Indicator Parsing
+- Roman numerals in part indicators must be parsed using a strict, case-insensitive regex (e.g., `^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`).
+- Parsed values are capped at `50`; numerals above this threshold are rejected and the episode is treated as lacking a part indicator.
+- Convert any roman numerals to Arabic numerals before comparing part indices or applying arc boundary logic.
 
 ## 7. Programmatic Cleanup Rules
 - Boilerplate markers and credit extraction regexes live in `data/rules/cleanup.yaml`. This YAML file contains:
@@ -383,14 +429,33 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
 - Cleanup scripts load rules from YAML at runtime; no hard-coded markers remain in code.
 - Maintain unit tests under `tests/cleanup/` covering a representative sample corpus to guard against regressions.
 
+### 7.1 HTML Parsing Implementation
+- The reference implementation uses `htmlparser2` with `dom-serializer` in Node.js and must enable full HTML entity decoding.
+- Treat `<p>`, `<div>`, and `<li>` as block-level elements that introduce paragraph breaks.
+- Interpret `<br>` as a soft line break.
+- Strip all other tags entirely, including `<script>` and `<style>` blocks.
+
 ## 8. LLM Enrichment & Cache Discipline
 - Episode cache schema is locked to the minimal shape described in §4.2; extra keys are forbidden.
 - Validator behaviour:
   - Trim whitespace on every string, dropping entries shorter than two characters.
+  - Before de-duplicating string arrays (e.g., `keyPeople`), canonicalise entries by trimming whitespace, applying Unicode NFKD normalisation, stripping diacritics, and lowercasing for comparison. Preserve the original casing from the first occurrence in the stored array.
   - De-duplicate arrays while preserving original order.
   - Enforce array length constraints and kebab-case for `keyThemes`.
 - Cache keys remain `${itemId}:${fingerprint}`.
 - `data/series-llm.json` may omit `seriesTitle` when status is not `ok`; compose will fall back to programmatic defaults.
+
+### 8.1 LLM Runtime Policy
+- Default timeout: 20 seconds per API call.
+- Retries: up to 3 attempts with exponential backoff delays of 1s, 2s, then 4s.
+- Safety Cap: To prevent accidental, large-scale re-enrichment during routine incremental runs, the pipeline defaults to a maximum of 200 LLM calls per run. This can be configured with the `--max-llm-calls <N>` flag.
+- Initial Seeding: For the initial, one-time backfill of the entire episode history, this safety cap must be explicitly overridden. This is done by setting the flag to a higher number or to `-1` for unlimited calls (e.g., `npm run llm:episodes -- --max-llm-calls -1`).
+- Logging: record the model name and observed latency for every call.
+
+### 8.2 Cache Management
+- LLM caches (`data/episodes-llm.json`, `data/series-llm.json`) are append-only; entries with outdated fingerprints remain but are ignored at read time.
+- Provide `scripts/llm/compact-cache.mjs` to remove cache entries whose keys no longer correspond to known fingerprints.
+- Schedule a weekly CI job that executes the compaction script to prune stale entries.
 
 ## 9. Compose, Redaction & Public Exposure
 - Compose precedence is explicit: `publicEpisode = { ...rawEpisode, ...programmaticEpisode, ...llmEpisode }`.
@@ -412,6 +477,11 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
 | `seriesGroupingConfidence` | Programmatic | Programmatic | ✅ |
 | `yearConfidence` | Programmatic/LLM | Programmatic/LLM | ✅ |
 
+### 9.1 Field Precedence Rules
+- For `yearFrom`, `yearTo`, and `yearConfidence` in `public/episodes.json`, prefer the values from the LLM cache entry when `status = "ok"` **and** the years are numeric within `[-5000, 2100]`.
+- When the preferred LLM values are unavailable or invalid, fall back to the programmatic layer.
+- If neither source provides a valid year span, publish `yearFrom = null`, `yearTo = null`, and `yearConfidence = "unknown"`.
+
 ## 10. Validation & Contract Checks
 - `scripts/validate.js` MUST:
   1. Load schemas via AJV for all public and cache files.
@@ -424,6 +494,14 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
      - Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, derived tags) contain no empty strings and are de-duplicated.
      - Enumerated confidence values match the declared enums.
      - Object keys follow the stable ordering helper (fail validation if unsorted serialisation is detected).
+  4. RSS provenance checks:
+     - If a previously seen `episodeId` reappears with a different `audioUrl`, log an error entry to `data/errors.jsonl` and update the stored value unless the `--lock-audio` flag is passed.
+     - Validate that every `source.enclosureUrl` is a well-formed HTTPS URL.
+
+### 10.1 Golden File Testing
+- Maintain a `/tests/golden/` directory containing canonical sample outputs for each major JSON artefact (e.g., `episodes-raw.sample.json`, `episodes-programmatic.sample.json`, `public-episodes.sample.json`).
+- Add a CI step that runs the pipeline against the bundled sample data and fails if any generated artefact differs from its golden counterpart.
+- Pull requests that intentionally change deterministic cleanup or compose logic must refresh the goldens via `npm run test:update-goldens` and commit the updated files.
 
 ## 11. Pipeline Flow
 ```
@@ -513,7 +591,9 @@ Each stage reads the previous layer and only appends or updates the keyed object
 ## 14. Error Handling & Ledger
 - Non-fatal errors append to `data/errors.jsonl`; the run continues so long as validation passes.
 - Validation remains the gatekeeper for exit codes.
+- Each ledger entry must include a `level` field constrained to the enum `"info" | "warn" | "error"` to enable filtering.
 - Include log entries for LLM errors, cleanup anomalies, and compose fallbacks.
+- Rotate `data/errors.jsonl` daily via CI into `data/errors/errors.YYYY-MM-DD.jsonl`, retaining the most recent 30 days by default.
 
 ## 15. Validation-Adjacent Guarantees
 - Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, `episodeIds`, derived tags) must be de-duplicated.
@@ -525,6 +605,8 @@ Each stage reads the previous layer and only appends or updates the keyed object
   - `--dry` — perform a dry run without writes.
   - `--since=YYYY-MM-DD` — limit processing to episodes published on/after the date.
   - `--force-llm <ID>` — bypass caches for a specific `episodeId` or `seriesId`.
+  - `--plan` — print a table of items requiring LLM enrichment (new or changed fingerprints) with estimated token cost before issuing API calls.
+  - `--output <dir>` — write final artefacts to a temporary directory instead of overwriting in-place outputs.
 - GitHub Actions:
   - Upload build artefacts for `public/*.json` and a `diff.txt` comparing `main` vs PR outputs.
   - Fail the job when validation fails; succeed even when LLM stages log recoverable errors.
@@ -537,8 +619,11 @@ Each stage reads the previous layer and only appends or updates the keyed object
 - Migration runs once before the new pipeline executes; document its usage alongside the other scripts.
 
 ## 18. Operational Considerations
-- **Environment variables**: `OPENAI_API_KEY` must be set locally and as a GitHub repo secret (`secrets.OPENAI_API_KEY`).
-- **Model defaults**: configure the OpenAI client for `gpt-5-nano` with automatic fallback to the lesser model and omit temperature arguments (unsupported by the primary model).
+- **Environment variables**:
+  - `OPENAI_API_KEY` must be set locally and as a GitHub repo secret (`secrets.OPENAI_API_KEY`).
+  - `OPENAI_MODEL_PRIMARY` defaults to `gpt-5-nano` when unspecified.
+  - `OPENAI_MODEL_FALLBACK` defaults to `gpt-4o-mini` and is used whenever the primary model is unavailable.
+- **Model defaults**: scripts must read the environment variables above, choose the first responsive model per call, and log which model handled each API request in accordance with §8.1.
 - **Commands** (to be updated in `package.json`):
   ```json
   {
@@ -574,3 +659,18 @@ Each stage reads the previous layer and only appends or updates the keyed object
 - Do we need additional metadata (e.g., guest bios) that could be programmatically derived from show notes? (Requires further discovery.)
 - Should we expose cleaned Markdown or plain text only? (Decide based on downstream consumer preferences.)
 - Are there thresholds for delaying LLM enrichment when OpenAI rate limits occur? (Potential future enhancement.)
+
+## 22. Slugging & Normalization Algorithm
+- `toSlug(str)` MUST:
+  1. Normalise the input string using Unicode NFKD, decomposing accented characters.
+  2. Strip all diacritic marks from the decomposed string.
+  3. Convert the result to lower-case ASCII.
+  4. Replace any sequence of one or more characters that are not `a–z` or `0–9` with a single hyphen (`-`).
+  5. Trim leading and trailing hyphens from the final output.
+- Example: `toSlug("Napoléon III") === "napoleon-iii"`.
+- Use this helper whenever generating the slug portion of a `seriesId` or similar identifiers.
+
+## 22. Security & Data Privacy
+- The pipeline processes public RSS content only and must never ingest or store Personally Identifiable Information (PII).
+- CI logs and runtime logging must redact API keys and avoid printing full LLM prompts or responses; log only item identifiers, status, and metadata such as latency.
+- Treat the guidance here as non-negotiable guardrails for both local runs and CI executions.
