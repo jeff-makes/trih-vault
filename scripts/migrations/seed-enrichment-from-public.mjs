@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { epFingerprint, seriesFingerprint } from "../llm/fingerprints.ts";
+import { epFingerprint, seriesFingerprint } from "../llm/fingerprints.mjs";
 
 const EPISODE_ENRICHMENT_FIELDS = [
   "yearFrom",

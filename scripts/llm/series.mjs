@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import OpenAI from "openai";
-import { seriesFingerprint } from "./fingerprints.ts";
+import { seriesFingerprint } from "./fingerprints.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..", "..");
@@ -14,35 +14,12 @@ const SERIES_USER_TEMPLATE = `SERIES\nTitle: {{title}}\n\nEPISODES:\n{{episodes}
 
 const MAX_ATTEMPTS = 3;
 
-type Series = {
-  id: string;
-  title?: string | null;
-  episodeIds?: string[];
-};
-
-type EpisodeMap = Map<string, { title?: string | null; description?: string | null }>;
-
-type SeriesEnrichment = {
-  publicTitle: string;
-  yearFrom: number | null;
-  yearTo: number | null;
-  confidence: number;
-};
-
-type SeriesCacheEntry = SeriesEnrichment & {
-  lastEnrichedAt?: string;
-  enrichmentFingerprint: string;
-  [key: string]: unknown;
-};
-
-type SeriesCache = Record<string, SeriesCacheEntry>;
-
-async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
+async function readJson(relativePath, fallback) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   try {
     const raw = await fs.readFile(fullPath, "utf8");
-    return JSON.parse(raw) as T;
-  } catch (error: any) {
+    return JSON.parse(raw);
+  } catch (error) {
     if (error?.code === "ENOENT") {
       return fallback;
     }
@@ -50,14 +27,14 @@ async function readJson<T>(relativePath: string, fallback: T): Promise<T> {
   }
 }
 
-async function writeJsonIfChanged(relativePath: string, value: unknown): Promise<void> {
+async function writeJsonIfChanged(relativePath, value) {
   const fullPath = path.join(ROOT_DIR, relativePath);
   await fs.mkdir(path.dirname(fullPath), { recursive: true });
   const next = JSON.stringify(value, null, 2) + "\n";
   let previous = "";
   try {
     previous = await fs.readFile(fullPath, "utf8");
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code !== "ENOENT") {
       throw error;
     }
@@ -67,7 +44,7 @@ async function writeJsonIfChanged(relativePath: string, value: unknown): Promise
   }
 }
 
-function stripHtml(input: string | null | undefined): string {
+function stripHtml(input) {
   if (!input) {
     return "";
   }
@@ -82,7 +59,7 @@ function stripHtml(input: string | null | undefined): string {
     .trim();
 }
 
-function sanitizeYear(value: unknown): number | null {
+function sanitizeYear(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return null;
   }
@@ -93,7 +70,7 @@ function sanitizeYear(value: unknown): number | null {
   return normalized;
 }
 
-function sanitizeConfidence(value: unknown): number {
+function sanitizeConfidence(value) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return 0;
   }
@@ -102,7 +79,7 @@ function sanitizeConfidence(value: unknown): number {
   return Number(value.toFixed(6));
 }
 
-function sanitizePublicTitle(value: unknown, fallback: string): string {
+function sanitizePublicTitle(value, fallback) {
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (trimmed) {
@@ -112,8 +89,8 @@ function sanitizePublicTitle(value: unknown, fallback: string): string {
   return fallback;
 }
 
-function formatSeriesPrompt(series: Series, episodes: EpisodeMap, withReminder = false): string {
-  const lines: string[] = [];
+function formatSeriesPrompt(series, episodes, withReminder = false) {
+  const lines = [];
   const ids = Array.isArray(series.episodeIds) ? series.episodeIds : [];
   for (const episodeId of ids) {
     const record = episodes.get(episodeId);
@@ -131,7 +108,7 @@ function formatSeriesPrompt(series: Series, episodes: EpisodeMap, withReminder =
   return base;
 }
 
-function safeParseJson(payload: string): any | null {
+function safeParseJson(payload) {
   try {
     return JSON.parse(payload);
   } catch (error) {
@@ -149,7 +126,7 @@ function safeParseJson(payload: string): any | null {
   }
 }
 
-function sanitizeSeriesEnrichment(raw: any, fallbackTitle: string): SeriesEnrichment {
+function sanitizeSeriesEnrichment(raw, fallbackTitle) {
   return {
     publicTitle: sanitizePublicTitle(raw?.publicTitle, fallbackTitle),
     yearFrom: sanitizeYear(raw?.yearFrom),
@@ -158,19 +135,14 @@ function sanitizeSeriesEnrichment(raw: any, fallbackTitle: string): SeriesEnrich
   };
 }
 
-function entriesEqual(a: SeriesCacheEntry | undefined, b: SeriesCacheEntry): boolean {
+function entriesEqual(a, b) {
   if (!a) {
     return false;
   }
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-async function requestSeriesEnrichment(
-  openai: OpenAI,
-  series: Series,
-  episodes: EpisodeMap,
-  attempt = 0
-): Promise<SeriesEnrichment> {
+async function requestSeriesEnrichment(openai, series, episodes, attempt = 0) {
   const response = await openai.chat.completions.create({
     model: "gpt-5-nano",
     messages: [
@@ -192,9 +164,9 @@ async function requestSeriesEnrichment(
   throw new Error(`Failed to parse enrichment for series ${series.id}`);
 }
 
-function computeSeriesFingerprint(series: Series, episodes: EpisodeMap): string {
+function computeSeriesFingerprint(series, episodes) {
   const baseTitle = series.title ?? "";
-  const titles: string[] = [];
+  const titles = [];
   for (const episodeId of series.episodeIds ?? []) {
     const record = episodes.get(episodeId);
     if (!record) continue;
@@ -204,7 +176,7 @@ function computeSeriesFingerprint(series: Series, episodes: EpisodeMap): string 
   return seriesFingerprint(baseTitle, titles);
 }
 
-async function main(): Promise<void> {
+async function main() {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.error("Missing OPENAI_API_KEY environment variable.");
@@ -212,8 +184,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  const episodes = await readJson<any[]>("public/episodes.raw.json", []);
-  const episodeMap: EpisodeMap = new Map();
+  const episodes = await readJson("public/episodes.raw.json", []);
+  const episodeMap = new Map();
   for (const episode of episodes) {
     if (!episode || typeof episode !== "object" || typeof episode.id !== "string") {
       continue;
@@ -224,14 +196,14 @@ async function main(): Promise<void> {
     });
   }
 
-  const seriesList = await readJson<Series[]>("public/series.raw.json", []);
+  const seriesList = await readJson("public/series.raw.json", []);
   if (!Array.isArray(seriesList) || seriesList.length === 0) {
     console.log("No series found. Skipping series enrichment.");
     return;
   }
 
-  const cache = await readJson<SeriesCache>("data/series-enrichment.json", {});
-  const nextCache: SeriesCache = { ...cache };
+  const cache = await readJson("data/series-enrichment.json", {});
+  const nextCache = { ...cache };
   const openai = new OpenAI({ apiKey });
   const nowIso = new Date().toISOString();
 
@@ -256,7 +228,7 @@ async function main(): Promise<void> {
     const existing = cache[series.id];
     console.log(`Enriching series ${series.id} (${series.title ?? "untitled"})`);
     const enrichment = await requestSeriesEnrichment(openai, series, episodeMap);
-    const entry: SeriesCacheEntry = {
+    const entry = {
       ...(existing ?? {}),
       ...enrichment,
       lastEnrichedAt: nowIso,
