@@ -17,6 +17,7 @@ import {
 import episodeSchema from "@/../schema/episode.public.schema.json" assert { type: "json" };
 import seriesSchema from "@/../schema/series.public.schema.json" assert { type: "json" };
 import cacheSchema from "@/../schema/cache.llm.schema.json" assert { type: "json" };
+import { SERIES_OVERRIDES } from "@/config/seriesOverrides";
 
 const blobAuthOptions = process.env.BLOB_READ_WRITE_TOKEN
   ? { token: process.env.BLOB_READ_WRITE_TOKEN }
@@ -98,7 +99,7 @@ export async function GET() {
 
     const updatedRawEpisodes = [...existingRawEpisodes, ...newRawEpisodes];
     const programmaticEpisodes = runProgrammaticEnrichment(updatedRawEpisodes);
-    const { programmaticSeries } = runSeriesGrouping(programmaticEpisodes);
+    const { programmaticSeries } = runSeriesGrouping(programmaticEpisodes, SERIES_OVERRIDES);
 
     const episodeLlmResult = await runLlmEpisodeEnrichment(programmaticEpisodes, existingEpisodeLlmCache);
     const seriesLlmResult = await runLlmSeriesEnrichment(programmaticSeries, existingSeriesLlmCache);

@@ -47,6 +47,13 @@ const getSeriesLlm = (
   return cacheEntry;
 };
 
+const normalizeYearRange = (yearFrom: number | null, yearTo: number | null): [number | null, number | null] => {
+  if (yearFrom !== null && yearTo !== null && yearFrom > yearTo) {
+    return [yearTo, yearFrom];
+  }
+  return [yearFrom, yearTo];
+};
+
 export const runComposeStep = ({
   rawEpisodes,
   programmaticEpisodes,
@@ -64,6 +71,11 @@ export const runComposeStep = ({
       }
 
       const llm = getEpisodeLlm(episode, episodeLlmCache);
+
+      const [episodeYearFrom, episodeYearTo] = normalizeYearRange(
+        llm?.yearFrom ?? episode.yearFrom ?? null,
+        llm?.yearTo ?? episode.yearTo ?? null
+      );
 
       return {
         id: episode.episodeId,
@@ -90,8 +102,8 @@ export const runComposeStep = ({
         keyPeople: llm?.keyPeople ? [...llm.keyPeople] : [],
         keyPlaces: llm?.keyPlaces ? [...llm.keyPlaces] : [],
         keyThemes: llm?.keyThemes ? [...llm.keyThemes] : [],
-        yearFrom: llm?.yearFrom ?? episode.yearFrom ?? null,
-        yearTo: llm?.yearTo ?? episode.yearTo ?? null,
+        yearFrom: episodeYearFrom,
+        yearTo: episodeYearTo,
         yearConfidence: llm?.yearConfidence ?? episode.yearConfidence ?? "unknown"
       };
     })
@@ -109,6 +121,11 @@ export const runComposeStep = ({
         .filter((value): value is string => Boolean(value))
         .sort()[0] ?? null;
 
+      const [seriesYearFrom, seriesYearTo] = normalizeYearRange(
+        llm?.yearFrom ?? series.yearFrom ?? null,
+        llm?.yearTo ?? series.yearTo ?? null
+      );
+
       return {
         id: series.seriesId,
         seriesId: series.seriesId,
@@ -116,8 +133,8 @@ export const runComposeStep = ({
         seriesKeyRaw: series.seriesKeyRaw ?? null,
         seriesGroupingConfidence: series.seriesGroupingConfidence,
         episodeIds: [...series.episodeIds],
-        yearFrom: llm?.yearFrom ?? series.yearFrom ?? null,
-        yearTo: llm?.yearTo ?? series.yearTo ?? null,
+        yearFrom: seriesYearFrom,
+        yearTo: seriesYearTo,
         yearConfidence: llm?.yearConfidence ?? series.yearConfidence ?? "unknown",
         fingerprint: series.fingerprint,
         memberEpisodeFingerprints: series.memberEpisodeFingerprints

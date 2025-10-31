@@ -68,7 +68,40 @@ const sanitizeArray = (values: unknown[], maxItems?: number): string[] => {
   return result;
 };
 
+const toKebabCase = (value: string): string | null => {
+  const lower = value.toLowerCase();
+  const replaced = lower.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/-+/g, "-");
+  return replaced || null;
+};
+
+const sanitizeThemes = (values: unknown[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    if (typeof value !== "string") {
+      continue;
+    }
+    const normalised = toKebabCase(value);
+    if (!normalised || seen.has(normalised)) {
+      continue;
+    }
+    result.push(normalised);
+    seen.add(normalised);
+    if (result.length >= 8) {
+      break;
+    }
+  }
+
+  return result;
+};
+
 const toJsonArrayString = (value: unknown): string => JSON.stringify(value, null, 2);
+
+const normaliseEpisodeCacheEntry = (entry: LlmEpisodeCacheEntry): LlmEpisodeCacheEntry => ({
+  ...entry,
+  keyThemes: sanitizeThemes(entry.keyThemes ?? [])
+});
 
 const cleanJsonFence = (content: string): string => {
   const trimmed = content.trim();
@@ -166,7 +199,11 @@ const parseJsonContent = (content: string): unknown => {
 
 const ensureYear = (value: unknown): number | null => {
   if (typeof value === "number" && Number.isFinite(value)) {
-    return Math.trunc(value);
+    const parsed = Math.trunc(value);
+    if (parsed < 0 || parsed > 9999) {
+      return null;
+    }
+    return parsed;
   }
   return null;
 };
@@ -180,6 +217,13 @@ const normaliseYearConfidence = (value: unknown): YearConfidence => {
 
 const defaultNow = () => new Date();
 
+const resolveModelName = (response: ChatCompletionResult | null | undefined): string => {
+  if (response?.model && response.model.length > 0) {
+    return response.model;
+  }
+  return process.env.OPENAI_MODEL_PRIMARY ?? "gpt-5-nano";
+};
+
 export const runLlmEpisodeEnrichment = async (
   programmaticEpisodes: Record<string, ProgrammaticEpisode>,
   existingCache: Record<string, LlmEpisodeCacheEntry>,
@@ -188,9 +232,17 @@ export const runLlmEpisodeEnrichment = async (
   const planOnly = options.planOnly ?? false;
   const client = planOnly ? null : options.client ?? createOpenAiClient();
   const errors: ErrorLedgerEntry[] = [];
-  const updatedCache: Record<string, LlmEpisodeCacheEntry> = { ...existingCache };
+  const updatedCache: Record<string, LlmEpisodeCacheEntry> = {};
+
+  Object.entries(existingCache).forEach(([cacheKey, entry]) => {
+    updatedCache[cacheKey] = normaliseEpisodeCacheEntry(entry);
+  });
   const now = options.now ?? defaultNow;
-  let remainingCalls = options.maxLlmCalls ?? Number.POSITIVE_INFINITY;
+  const maxCalls =
+    options.maxLlmCalls === undefined || options.maxLlmCalls === null || options.maxLlmCalls < 0
+      ? Number.POSITIVE_INFINITY
+      : options.maxLlmCalls;
+  let remainingCalls = maxCalls;
   let callsMade = 0;
   const planned: { episodeId: string; fingerprint: string }[] = [];
 
@@ -246,10 +298,10 @@ export const runLlmEpisodeEnrichment = async (
           error instanceof Error ? { cacheKey, error: error.message } : { cacheKey }
         )
       );
-      updatedCache[cacheKey] = {
+      updatedCache[cacheKey] = normaliseEpisodeCacheEntry({
         episodeId: episode.episodeId,
         fingerprint: episode.fingerprint,
-        model: "",
+        model: resolveModelName(null),
         promptVersion: EPISODE_PROMPT_VERSION,
         createdAt: now().toISOString(),
         status: "error",
@@ -260,7 +312,7 @@ export const runLlmEpisodeEnrichment = async (
         yearFrom: null,
         yearTo: null,
         yearConfidence: "unknown"
-      };
+      });
       continue;
     }
 
@@ -268,9 +320,9 @@ export const runLlmEpisodeEnrichment = async (
       const parsed = parseJsonContent(response.content) as Record<string, unknown>;
       const keyPeople = sanitizeArray((parsed.keyPeople as unknown[]) ?? [], 12);
       const keyPlaces = sanitizeArray((parsed.keyPlaces as unknown[]) ?? [], 12);
-      const keyThemes = sanitizeArray((parsed.keyThemes as unknown[]) ?? [], 8);
+      const keyThemes = sanitizeThemes((parsed.keyThemes as unknown[]) ?? []);
 
-      const entry: LlmEpisodeCacheEntry = {
+      const entry: LlmEpisodeCacheEntry = normaliseEpisodeCacheEntry({
         episodeId: episode.episodeId,
         fingerprint: episode.fingerprint,
         model: response.model,
@@ -284,7 +336,7 @@ export const runLlmEpisodeEnrichment = async (
         yearFrom: ensureYear(parsed.yearFrom),
         yearTo: ensureYear(parsed.yearTo),
         yearConfidence: normaliseYearConfidence(parsed.yearConfidence ?? "unknown")
-      };
+      });
 
       updatedCache[cacheKey] = entry;
     } catch (error) {
@@ -295,10 +347,10 @@ export const runLlmEpisodeEnrichment = async (
           raw: response?.content
         })
       );
-      updatedCache[cacheKey] = {
+      updatedCache[cacheKey] = normaliseEpisodeCacheEntry({
         episodeId: episode.episodeId,
         fingerprint: episode.fingerprint,
-        model: response?.model ?? "",
+        model: resolveModelName(response),
         promptVersion: EPISODE_PROMPT_VERSION,
         createdAt: now().toISOString(),
         status: "error",
@@ -309,7 +361,7 @@ export const runLlmEpisodeEnrichment = async (
         yearFrom: null,
         yearTo: null,
         yearConfidence: "unknown"
-      };
+      });
     }
   }
 
@@ -331,7 +383,11 @@ export const runLlmSeriesEnrichment = async (
   const errors: ErrorLedgerEntry[] = [];
   const updatedCache: Record<string, LlmSeriesCacheEntry> = { ...existingCache };
   const now = options.now ?? defaultNow;
-  let remainingCalls = options.maxLlmCalls ?? Number.POSITIVE_INFINITY;
+  const maxCalls =
+    options.maxLlmCalls === undefined || options.maxLlmCalls === null || options.maxLlmCalls < 0
+      ? Number.POSITIVE_INFINITY
+      : options.maxLlmCalls;
+  let remainingCalls = maxCalls;
   let callsMade = 0;
   const planned: { seriesId: string; fingerprint: string }[] = [];
 
@@ -402,7 +458,7 @@ export const runLlmSeriesEnrichment = async (
       updatedCache[cacheKey] = {
         seriesId: series.seriesId,
         fingerprint: series.fingerprint,
-        model: "",
+        model: resolveModelName(null),
         promptVersion: SERIES_PROMPT_VERSION,
         createdAt: now().toISOString(),
         status: "error",
@@ -460,7 +516,7 @@ export const runLlmSeriesEnrichment = async (
       updatedCache[cacheKey] = {
         seriesId: series.seriesId,
         fingerprint: series.fingerprint,
-        model: response?.model ?? "",
+        model: resolveModelName(response),
         promptVersion: SERIES_PROMPT_VERSION,
         createdAt: now().toISOString(),
         status: "error",

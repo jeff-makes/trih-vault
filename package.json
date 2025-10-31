@@ -9,7 +9,9 @@
     "lint": "next lint",
     "dev:pipeline": "tsx --tsconfig tsconfig.json src/run-local-pipeline.ts",
     "migrate:caches": "node scripts/migrate-legacy-caches.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "schema:check": "node scripts/schema-check.mjs",
+    "llm:iterate": "node scripts/iterate-llm-enrichment.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^0.18.0",

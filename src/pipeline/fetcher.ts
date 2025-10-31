@@ -19,11 +19,39 @@ const toIsoString = (date: Date): string => date.toISOString();
 
 const normalizeGuid = (guid: string): string => guid.trim();
 
+const firstString = (value: any): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return firstString(value[0]);
+  }
+
+  if (typeof value === "object") {
+    if (value.url !== undefined) {
+      return firstString(value.url);
+    }
+    if (value.href !== undefined) {
+      return firstString(value.href);
+    }
+    if (value._ !== undefined) {
+      return firstString(value._);
+    }
+  }
+
+  return null;
+};
+
 const normaliseEpisode = (item: any): RawEpisode | null => {
-  const guid = item.guid?.[0]?._ ?? item.guid?.[0];
-  const pubDate = item.pubDate?.[0];
-  const enclosure = item.enclosure?.[0]?.$;
-  const enclosureUrl = enclosure?.url ?? item.enclosure?.[0];
+  const guid = firstString(item.guid);
+  const pubDate = firstString(item.pubDate);
+  const enclosureNode = Array.isArray(item.enclosure) ? item.enclosure[0] : item.enclosure;
+  const enclosureUrl = firstString(enclosureNode);
 
   if (!guid || !pubDate || !enclosureUrl) {
     return null;
@@ -40,8 +68,11 @@ const normaliseEpisode = (item: any): RawEpisode | null => {
     rssLastSeenAt: toIsoString(new Date()),
     source: {
       guid: guid,
-      itunesEpisode: item["itunes:episode"]?.[0] ? Number(item["itunes:episode"][0]) : null,
-      megaphoneId: item["megaphone:id"]?.[0] ?? null,
+      itunesEpisode: (() => {
+        const episode = firstString(item["itunes:episode"]);
+        return episode ? Number(episode) : null;
+      })(),
+      megaphoneId: firstString(item["megaphone:id"]),
       enclosureUrl
     }
   };

@@ -436,6 +436,9 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
 - Strip all other tags entirely, including `<script>` and `<style>` blocks.
 
 ## 8. LLM Enrichment & Cache Discipline
+- Every pipeline run rewrites JSON artefacts via the stable serializer. Because fingerprints and grouping logic are deterministic, unchanged episodes produce identical records so downstream diffs remain empty.
+- LLM cache keys are `${episodeId}:${fingerprint}` or `${seriesId}:${fingerprint}`. Once an item is cached, later runs reuse the stored response; only new episodes or fingerprint changes trigger fresh API calls.
+- Programmatic grouping recomputes series metadata on each run, but `seriesId = toSlug(seriesKey) + "-" + firstPubYYYYMMDD` keeps identifiers stable unless the source feed or grouping rules change intentionally.
 - Episode cache schema is locked to the minimal shape described in §4.2; extra keys are forbidden.
 - Validator behaviour:
   - Trim whitespace on every string, dropping entries shorter than two characters.
@@ -535,6 +538,7 @@ Each stage reads the previous layer and only appends or updates the keyed object
 ### 11.2 Build Series (Raw)
 - Deterministic script analyses episodes to group arcs and writes `data/series-raw.json`.
 - Must handle flexible part numbering, shared prefixes, and hyphen/colon variants as described in §6.
+- A deterministic override map (`src/config/seriesOverrides.ts`) may inject or amend memberships after heuristic grouping to capture arcs whose titles diverge heavily between parts.
 
 ### 11.3 Programmatic Episode Enrichment
 - Shared utilities (e.g., `stripHtml`, boilerplate markers) extract clean text once per episode.

@@ -14,6 +14,8 @@ import {
   LlmSeriesCacheEntry,
   RawEpisode
 } from "@/types";
+import { YearConfidence } from "@/types";
+import { SERIES_OVERRIDES } from "@/config/seriesOverrides";
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
 const PUBLIC_DIR = path.resolve(process.cwd(), "public");
@@ -58,7 +60,81 @@ interface LocalPipelineOptions {
   outputDir?: string | null;
   forceEpisodeIds?: Set<string>;
   forceSeriesIds?: Set<string>;
+  forceAllEpisodes?: boolean;
+  forceAllSeries?: boolean;
 }
+
+const YEAR_CONFIDENCE_RANK: Record<YearConfidence, number> = {
+  high: 3,
+  medium: 2,
+  low: 1,
+  unknown: 0
+};
+
+const normaliseYearRange = (yearFrom: number | null, yearTo: number | null): [number | null, number | null] => {
+  if (yearFrom !== null && yearTo !== null && yearFrom > yearTo) {
+    return [yearTo, yearFrom];
+  }
+  return [yearFrom, yearTo];
+};
+
+const applyEpisodeYearSpans = (
+  programmaticEpisodes: Record<string, ProgrammaticEpisode>,
+  episodeCache: Record<string, LlmEpisodeCacheEntry>
+): void => {
+  Object.values(programmaticEpisodes).forEach((episode) => {
+    const cacheKey = `${episode.episodeId}:${episode.fingerprint}`;
+    const cacheEntry = episodeCache[cacheKey];
+    const isCacheValid = cacheEntry && cacheEntry.status === "ok";
+    const candidateFrom = isCacheValid ? cacheEntry.yearFrom : episode.yearFrom ?? null;
+    const candidateTo = isCacheValid ? cacheEntry.yearTo : episode.yearTo ?? null;
+    const [yearFrom, yearTo] = normaliseYearRange(candidateFrom ?? null, candidateTo ?? null);
+    episode.yearFrom = yearFrom;
+    episode.yearTo = yearTo;
+    episode.yearConfidence = isCacheValid
+      ? cacheEntry.yearConfidence
+      : episode.yearConfidence ?? "unknown";
+  });
+};
+
+const applySeriesYearSpans = (
+  programmaticSeries: Record<string, ProgrammaticSeries>,
+  programmaticEpisodes: Record<string, ProgrammaticEpisode>
+): void => {
+  Object.values(programmaticSeries).forEach((series) => {
+    const members = series.episodeIds
+      .map((episodeId) => programmaticEpisodes[episodeId])
+      .filter((episode): episode is ProgrammaticEpisode => Boolean(episode));
+
+    const yearValues: number[] = [];
+    members.forEach((episode) => {
+      if (episode.yearFrom !== null && episode.yearFrom !== undefined) {
+        yearValues.push(episode.yearFrom);
+      }
+      if (episode.yearTo !== null && episode.yearTo !== undefined) {
+        yearValues.push(episode.yearTo);
+      }
+    });
+
+    if (yearValues.length > 0) {
+      const computedFrom = Math.min(...yearValues);
+      const computedTo = Math.max(...yearValues);
+      const [yearFrom, yearTo] = normaliseYearRange(computedFrom, computedTo);
+      series.yearFrom = yearFrom;
+      series.yearTo = yearTo;
+      const seriesConfidence = members
+        .map((episode) => episode.yearConfidence ?? "unknown")
+        .reduce<YearConfidence>((current, candidate) => {
+          return YEAR_CONFIDENCE_RANK[candidate] < YEAR_CONFIDENCE_RANK[current] ? candidate : current;
+        }, "high");
+      series.yearConfidence = seriesConfidence;
+    } else {
+      series.yearFrom = null;
+      series.yearTo = null;
+      series.yearConfidence = "unknown";
+    }
+  });
+};
 
 export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Promise<void> => {
   const dataDir = options.outputDir
@@ -95,14 +171,31 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
 
   const updatedRawEpisodes = [...existingRawEpisodes, ...newRawEpisodes];
   const programmaticEpisodes = runProgrammaticEnrichment(updatedRawEpisodes);
-  const { programmaticSeries } = runSeriesGrouping(programmaticEpisodes);
+  const { programmaticSeries } = runSeriesGrouping(programmaticEpisodes, SERIES_OVERRIDES);
 
-  const forceEpisodeIds = options.forceEpisodeIds
-    ? new Set(Array.from(options.forceEpisodeIds).filter((id) => programmaticEpisodes[id]))
-    : undefined;
-  const forceSeriesIds = options.forceSeriesIds
-    ? new Set(Array.from(options.forceSeriesIds).filter((id) => programmaticSeries[id]))
-    : undefined;
+  const episodeIdsToForce = new Set<string>();
+  if (options.forceAllEpisodes) {
+    Object.keys(programmaticEpisodes).forEach((id) => episodeIdsToForce.add(id));
+  }
+  if (options.forceEpisodeIds) {
+    options.forceEpisodeIds.forEach((id) => episodeIdsToForce.add(id));
+  }
+  const forceEpisodeIds =
+    episodeIdsToForce.size > 0
+      ? new Set(Array.from(episodeIdsToForce).filter((id) => programmaticEpisodes[id]))
+      : undefined;
+
+  const seriesIdsToForce = new Set<string>();
+  if (options.forceAllSeries) {
+    Object.keys(programmaticSeries).forEach((id) => seriesIdsToForce.add(id));
+  }
+  if (options.forceSeriesIds) {
+    options.forceSeriesIds.forEach((id) => seriesIdsToForce.add(id));
+  }
+  const forceSeriesIds =
+    seriesIdsToForce.size > 0
+      ? new Set(Array.from(seriesIdsToForce).filter((id) => programmaticSeries[id]))
+      : undefined;
 
   const episodeLlmResult = await runLlmEpisodeEnrichment(programmaticEpisodes, existingEpisodeLlmCache, {
     maxLlmCalls: options.maxEpisodeLlmCalls,
@@ -116,7 +209,12 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
   });
 
   const updatedEpisodeLlmCache = episodeLlmResult.cache;
+  applyEpisodeYearSpans(programmaticEpisodes, updatedEpisodeLlmCache);
   const updatedSeriesLlmCache = seriesLlmResult.cache;
+  const cleanedSeriesLlmCache = Object.fromEntries(
+    Object.entries(updatedSeriesLlmCache).filter(([, entry]) => !!programmaticSeries[entry.seriesId])
+  );
+  applySeriesYearSpans(programmaticSeries, programmaticEpisodes);
 
   const errors = [...episodeLlmResult.errors, ...seriesLlmResult.errors];
 
@@ -162,7 +260,7 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
     programmaticEpisodes,
     programmaticSeries,
     episodeLlmCache: updatedEpisodeLlmCache,
-    seriesLlmCache: updatedSeriesLlmCache
+    seriesLlmCache: cleanedSeriesLlmCache
   });
 
   const [episodeSchema, seriesSchema, cacheSchema] = await Promise.all([
@@ -192,7 +290,7 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
     await writeJsonFile(programmaticEpisodesPath, programmaticEpisodes);
     await writeJsonFile(seriesProgrammaticPath, programmaticSeries);
     await writeJsonFile(episodeLlmCachePath, updatedEpisodeLlmCache);
-    await writeJsonFile(seriesLlmCachePath, updatedSeriesLlmCache);
+    await writeJsonFile(seriesLlmCachePath, cleanedSeriesLlmCache);
     await writeJsonFile(publicEpisodesPath, publicEpisodes);
     await writeJsonFile(publicSeriesPath, publicSeries);
   } else {
@@ -250,7 +348,18 @@ if (require.main === module) {
           if (value) {
             value.split(",").forEach((id) => {
               const trimmed = id.trim();
-              if (trimmed) {
+              if (!trimmed) {
+                return;
+              }
+              const lower = trimmed.toLowerCase();
+              if (lower === "all") {
+                options.forceAllEpisodes = true;
+                options.forceAllSeries = true;
+              } else if (lower === "episodes" || lower === "episode") {
+                options.forceAllEpisodes = true;
+              } else if (lower === "series" || lower === "series-only") {
+                options.forceAllSeries = true;
+              } else {
                 forcedIds.push(trimmed);
               }
             });

@@ -1,0 +1,4 @@
+
+> trih-browser@0.1.0 dev:pipeline
+> tsx --tsconfig tsconfig.json src/run-local-pipeline.ts --force-llm episodes
+
