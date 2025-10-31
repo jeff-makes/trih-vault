@@ -163,12 +163,12 @@ All JSON is stable-sorted; repeated runs with unchanged inputs produce identical
 | `OPENAI_API_KEY` | Required to call OpenAI. |
 | `OPENAI_MODEL_PRIMARY` | Default `gpt-5-nano`. |
 | `OPENAI_MODEL_FALLBACK` | Optional fallback (default `gpt-4o-mini`). |
-| `BLOB_READ_WRITE_TOKEN` | Credential for Vercel Blob writes (used by the UI/deploy steps). |
+| `VERCEL_REVALIDATE_URL` | HTTPS webhook invoked after publish to refresh the Vercel cache. |
 
-Local runs typically load these via `.env.local`. CI expects the secrets to be defined for plan mode execution, even though no tokens are consumed there.
+Local runs typically load these via `.env.local`. CI expects the secrets to be defined for plan mode execution, even though no tokens are consumed there. The scheduled GitHub Actions workflow (`pipeline-publish.yml`) runs the full pipeline, commits artefacts back to `main`, and POSTs to the revalidation webhook.
 
 Other configuration:
-- `vercel.json` schedules `/api/cron/run-pipeline` daily at 06:00 UTC. The corresponding serverless handler (to be implemented) should invoke the same orchestration path in `run-local-pipeline.ts`, optionally with a limited `--since` window.
+- Vercel now picks up changes via ordinary git deployments; no cron job or Blob persistence is required.
 - `tsconfig.json` / `vitest.config.ts` align TypeScript + test environment.
 - The Next.js app (`app/`) reads from `public/` artefacts at runtime.
 

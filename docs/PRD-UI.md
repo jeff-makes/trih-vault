@@ -268,8 +268,8 @@ Integrate via GA4 gtag events with consistent parameters (`content_type`, `conte
 
 - Next.js App Router, static-friendly architecture.
 - ISR or on-demand revalidation for detail pages.
-- Pipeline publish step triggers revalidation via `/api/revalidate?path=…`.
-- Ensure environment variables (GA4 measurement ID) are provisioned in Vercel.
+- Scheduled GitHub Actions pipeline commits refreshed JSON artefacts to `main`, then calls the Vercel revalidation webhook; deployments pick up changes automatically.
+- Ensure environment variables (GA4 measurement ID, etc.) are provisioned in Vercel.
 - Monitor build size and ensure JSON artefacts remain below Vercel’s 10 MB edge limit per file.
 
 ---

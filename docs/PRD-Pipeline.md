@@ -612,8 +612,8 @@ Each stage reads the previous layer and only appends or updates the keyed object
   - `--plan` — print a table of items requiring LLM enrichment (new or changed fingerprints) with estimated token cost before issuing API calls.
   - `--output <dir>` — write final artefacts to a temporary directory instead of overwriting in-place outputs.
 - GitHub Actions:
-  - Upload build artefacts for `public/*.json` and a `diff.txt` comparing `main` vs PR outputs.
-  - Fail the job when validation fails; succeed even when LLM stages log recoverable errors.
+  - `ci.yml` runs on push/PR, executes linting, plan-mode pipeline, and tests; upload `public/*.json` + `diff.txt` artefacts for review.
+  - `pipeline-publish.yml` runs on schedule/dispatch, executes the full pipeline, commits updated artefacts to `main`, and invokes the Vercel revalidation webhook.
   - Surface `data/errors.jsonl` as an artefact when entries are produced.
 
 ## 17. Incremental Behaviour & Migration
@@ -627,6 +627,7 @@ Each stage reads the previous layer and only appends or updates the keyed object
   - `OPENAI_API_KEY` must be set locally and as a GitHub repo secret (`secrets.OPENAI_API_KEY`).
   - `OPENAI_MODEL_PRIMARY` defaults to `gpt-5-nano` when unspecified.
   - `OPENAI_MODEL_FALLBACK` defaults to `gpt-4o-mini` and is used whenever the primary model is unavailable.
+  - `VERCEL_REVALIDATE_URL` (optional but recommended) triggers cache refresh after the scheduled publish run pushes changes.
 - **Model defaults**: scripts must read the environment variables above, choose the first responsive model per call, and log which model handled each API request in accordance with §8.1.
 - **Commands** (to be updated in `package.json`):
   ```json

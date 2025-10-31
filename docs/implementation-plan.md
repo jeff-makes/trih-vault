@@ -1,10 +1,10 @@
 Implementation Plan (Revised)
-This document breaks down the PRP-pipeline.md specification into a sequence of concrete, implementable steps. The architecture is designed for local development and seamless deployment on Vercel using Serverless Functions and Vercel Blob.
+This document breaks down the PRP-pipeline.md specification into a sequence of concrete, implementable steps. The architecture is designed for local development and reproducible GitHub Actions runs that publish artefacts back into the repository for Vercel to serve.
 
 Implementation Plan Checklist
 - [x] Step 1 — Project Setup & Foundational Code
 - [x] Step 2 — Define Core Pipeline Logic as Modular Functions
-- [x] Step 3 — Create Pipeline Orchestrators (Local & Vercel)
+- [x] Step 3 — Create Pipeline Orchestrators (Local & CI)
 - [x] Step 4 — Implement LLM Enrichment
 - [x] Step 5 — Implement Final Compose & Validation Steps
 - [x] Step 6 — Migration, CI, and Deployment
@@ -14,7 +14,7 @@ Goal: Establish the project structure, define types from schemas, and create the
 Prompt for AI:
 ```code
 Scaffold a new Next.js TypeScript project. Then perform the following setup:
-1.  **Add Dependencies:** Add `axios`, `xml2js`, `ajv`, and `@vercel/blob` to `package.json`.
+1.  **Add Dependencies:** Add `axios`, `xml2js`, and `ajv` to `package.json`.
 2.  **Create Schemas:** Create the `schema/` directory and populate it with three files: `episode.public.schema.json`, `series.public.schema.json`, and `cache.llm.schema.json`. For now, make them valid but empty JSON schema files (`{ "$schema": "http://json-schema.org/draft-07/schema#" }`).
 3.  **Define Types:** Create `src/types.ts`. Based on the tables in `PRD#4.2`, define and export TypeScript interfaces for all data models (e.g., `RawEpisode`, `ProgrammaticEpisode`, `PublicEpisode`, etc.).
 4.  **Create Core Utilities:** Create the `src/lib/` directory and add two files:
@@ -36,8 +36,8 @@ Create a new directory `src/pipeline`. Inside, create the following modular, sta
 3.  **`grouper.ts`:** Create a function `runSeriesGrouping(programmaticEpisodes)` that takes the programmatic episode map and returns `{ rawSeries: object, programmaticSeries: object }`. This file will contain all the logic for arc detection, part parsing, and series-level aggregation.
 ```
 
-Step 3 — Create Pipeline Orchestrators (Local & Vercel)
-Goal: Create the entry points that will call the modular pipeline functions. One for local development (using the filesystem) and one for Vercel (using Vercel Blob).
+Step 3 — Create Pipeline Orchestrators (Local & CI)
+Goal: Create the entry points that will call the modular pipeline functions. One for local development (using the filesystem) and one for GitHub Actions (running inside the repo workspace).
 Prompt for AI:
 ```code
 Now, create the two main entry points for the pipeline:
@@ -49,9 +49,10 @@ Now, create the two main entry points for the pipeline:
     -   Finally, it will write the updated artifacts back to the local `data/` and `public/` directories using `stableStringify`.
     -   Create a corresponding `dev:pipeline` script in `package.json`.
 
-2.  **Vercel Cron Job Handler (`app/api/cron/run-pipeline/route.ts`):**
-    -   This file should export a `GET` function for Vercel's Cron Jobs.
-    -   It will be almost identical to the local runner, but instead of reading/writing to the filesystem, it will use the `@vercel/blob` client to `get` and `put` the JSON artifacts from Vercel's Blob storage.
+2.  **CI Runner (GitHub Actions):**
+    -   Reuse the local runner inside the scheduled workflow so artefacts are produced within the repository.
+    -   After the run completes, commit updated `data/` and `public/` files and push them to `main`.
+    -   Call the configured Vercel revalidation webhook to ensure the deployed site reflects the freshly published artefacts.
 ```
 
 Step 4 — Implement LLM Enrichment
@@ -84,6 +85,5 @@ Implement the Validator: In src/pipeline/validator.ts, create a function runVali
 ```code
 Create the final supporting files for the project:
 Migration Script: scripts/migrate-legacy-caches.mjs as specified in PRD#17.
-GitHub Actions Workflow: .github/workflows/ci.yml. This workflow should run on every push to main or a PR. It should install dependencies, run linting, execute the pipeline via the local runner (npm run dev:pipeline), and run the golden file tests.
-Vercel Configuration: Create a vercel.json file. Define a cron job that triggers the app/api/cron/run-pipeline/route.ts endpoint once daily. Ensure environment variables from the PRD are listed as required.
+GitHub Actions Workflows: `.github/workflows/ci.yml` runs on every push/PR (lint, plan mode, tests). `.github/workflows/pipeline-publish.yml` runs on a schedule or manual dispatch, executes the full pipeline, commits artefacts back to main, and calls the Vercel revalidation webhook.
 ```
