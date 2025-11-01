@@ -91,6 +91,7 @@ All file writes go through `stableStringify` to guarantee byte-for-byte determin
 | Command | Purpose | Notable Options |
 | --- | --- | --- |
 | `npm run dev:pipeline` | Runs the full pipeline locally. | `--plan`, `--dry`, `--since`, `--force-llm`, `--max-llm-calls`, `--output` |
+| `npm run dev` | Boots the Next.js UI against the committed artefacts. | Loads `.env.local` automatically. |
 | `npm run schema:check` | Validates current artefacts against schemas. |  |
 | `npm run migrate:caches` | Transforms legacy LLM cache formats (one-time upkeep). |  |
 | `npm run llm:iterate` | Iteratively enriches in batches (useful for full history re-enrichment). | accepts batch size arg |
@@ -211,4 +212,5 @@ Following these patterns keeps the pipeline deterministic, testable, and cheap t
 
 ## Change History (stub)
 
+- **2025-10-31:** Fixed GitHub Actions publish workflow secret usage, restored timeline UI typings to match new artefacts, and reintroduced `@types/xml2js` so the pipeline compiles end-to-end.
 - **2025-10-30:** Introduced year-span propagation from episode LLM cache to series outputs; completed full gpt-5-nano backfill; documented pipeline in this overview.
