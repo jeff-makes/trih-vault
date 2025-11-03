@@ -4,6 +4,10 @@
 
 ---
 
+## Session Prep
+- Read `docs/SYSTEM_OVERVIEW.md` at session start to refresh the architecture and data flow.
+- Skim the PRDs — `docs/PRD-Pipeline.md` and `docs/PRD-UI.md` — so work stays aligned with current requirements; dive deeper into whichever matches the day’s focus.
+
 ## Project Overview
 - **Repository:** trih-browser
 - **Purpose:** Next.js + TypeScript project for The Rest Is History podcast data pipeline. Ingests RSS feed, performs deterministic enrichments (programmatic + LLM), and publishes JSON artefacts validated against schemas. Supports local runs and scheduled GitHub Actions publishes (Vercel serves static JSON).
@@ -14,10 +18,12 @@
 - Frontend timeline polish: BCE-aware ranges, collapsible long gaps, and updated UI PRD alignment.
 
 ## Next Steps
-- Wire up remaining performance/accessibility tasks for the timeline (gap skip short-circuit, optional virtualization).
+- Hook the slug registry builder into the pipeline/publish flow so artefacts + slugs refresh together.
+- Build the shared people/places indexes + similarity scoring utilities ahead of the detail pages.
 - Monitor the scheduled GitHub Actions publish + Vercel revalidation webhook once deployed to ensure artefacts update as expected.
 
 ## Recent Changes
+- **2025-11-02:** Added deterministic slug registry tooling (helpers, build script, tests) and refreshed PRDs/detail-view docs with V7 slug rules + layout notes.
 - **2025-11-01:** Timeline now keeps BCE spans intact, collapses large gaps with spine-mounted markers, and scales spacing at 1.5px/year; PRDs updated accordingly.
 - **2025-10-31:** Replaced Vercel cron/Blob pipeline with scheduled GitHub Actions publish that auto-commits artefacts and calls the Vercel revalidation webhook.
 - **2025-10-30:** Full LLM backfill completed with `gpt-5-nano`; added deterministic year-range propagation from episode cache to series output; schema validation passes on refreshed artefacts.
