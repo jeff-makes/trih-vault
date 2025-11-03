@@ -5,8 +5,14 @@ import {
   ProgrammaticSeries,
   PublicEpisode,
   PublicSeries,
-  RawEpisode
+  RawEpisode,
+  SlugRegistryEntry
 } from "@/types";
+import {
+  assignSlugsToArtefacts,
+  PublicEpisodeWithoutSlug,
+  PublicSeriesWithoutSlug
+} from "@/lib/slug/assign";
 
 interface ComposeInput {
   rawEpisodes: RawEpisode[];
@@ -19,6 +25,7 @@ interface ComposeInput {
 interface ComposeOutput {
   publicEpisodes: PublicEpisode[];
   publicSeries: PublicSeries[];
+  slugRegistry: Record<string, SlugRegistryEntry>;
 }
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
@@ -63,7 +70,7 @@ export const runComposeStep = ({
 }: ComposeInput): ComposeOutput => {
   const rawEpisodeMap = new Map(rawEpisodes.map((episode) => [episode.episodeId, episode]));
 
-  const publicEpisodes: PublicEpisode[] = Object.values(programmaticEpisodes)
+  const publicEpisodesBase: PublicEpisodeWithoutSlug[] = Object.values(programmaticEpisodes)
     .map((episode) => {
       const raw = rawEpisodeMap.get(episode.episodeId);
       if (!raw) {
@@ -105,7 +112,7 @@ export const runComposeStep = ({
         yearFrom: episodeYearFrom,
         yearTo: episodeYearTo,
         yearConfidence: llm?.yearConfidence ?? episode.yearConfidence ?? "unknown"
-      };
+      } as PublicEpisodeWithoutSlug;
     })
     .sort((a, b) => {
       const dateDiff = new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
@@ -146,7 +153,7 @@ export const runComposeStep = ({
         tonalDescriptors: llm?.tonalDescriptors ? [...llm.tonalDescriptors] : null,
         rssLastSeenAt: series.rssLastSeenAt ?? null,
         _sortKey: firstEpisodePublishedAt ?? "9999-12-31T23:59:59.999Z"
-      } as PublicSeries & { _sortKey: string };
+      } as PublicSeriesWithoutSlug & { _sortKey: string };
     })
     .sort((a, b) => {
       if (a._sortKey !== b._sortKey) {
@@ -155,11 +162,17 @@ export const runComposeStep = ({
       return a.seriesId.localeCompare(b.seriesId);
     });
 
-  const publicSeries = publicSeriesWithSortKey.map(({ _sortKey, ...rest }) => rest);
+  const publicSeriesBase: PublicSeriesWithoutSlug[] = publicSeriesWithSortKey.map(({ _sortKey, ...rest }) => rest);
+
+  const { episodes: publicEpisodes, series: publicSeries, registry: slugRegistry } = assignSlugsToArtefacts(
+    publicEpisodesBase,
+    publicSeriesBase
+  );
 
   return {
     publicEpisodes,
-    publicSeries
+    publicSeries,
+    slugRegistry
   };
 };
 

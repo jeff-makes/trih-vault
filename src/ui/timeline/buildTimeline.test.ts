@@ -6,16 +6,20 @@ import {
   type TimelineDisplayRow
 } from "./buildTimeline";
 
-const baseEpisode = (overrides: Partial<RawEpisodeInput>): RawEpisodeInput => ({
-  id: "episode",
-  cleanTitle: "Episode",
-  yearFrom: null,
-  yearTo: null,
-  seriesId: null,
-  part: null,
-  publishedAt: "2024-01-01T00:00:00.000Z",
-  ...overrides
-});
+const baseEpisode = (overrides: Partial<RawEpisodeInput>): RawEpisodeInput => {
+  const id = overrides.id ?? "episode";
+  return {
+    id,
+    slug: overrides.slug ?? id,
+    cleanTitle: "Episode",
+    yearFrom: null,
+    yearTo: null,
+    seriesId: null,
+    part: null,
+    publishedAt: "2024-01-01T00:00:00.000Z",
+    ...overrides
+  };
+};
 
 describe("buildTimeline", () => {
   it("returns episode rows with formatted BCE ranges", () => {
@@ -58,6 +62,7 @@ describe("buildTimeline", () => {
     const series: RawSeriesInput[] = [
       {
         id: "series-ww1",
+        slug: "world-war-i",
         seriesTitle: "World War I",
         yearFrom: null,
         yearTo: null,
@@ -78,6 +83,7 @@ describe("buildTimeline", () => {
       yearValue: 1914,
       episodeCount: 2
     });
+    expect(seriesRow?.href).toBe("/series/world-war-i");
     expect(seriesRow?.data && "episodes" in seriesRow.data ? seriesRow.data.episodes : []).toEqual([
       expect.objectContaining({ id: "part-1", partLabel: "Part 1", yearLabel: "1914" }),
       expect.objectContaining({ id: "part-2", partLabel: "Part 2", yearLabel: "1918" })
@@ -85,6 +91,7 @@ describe("buildTimeline", () => {
 
     const episodeRow = rows.find((row) => row.id === "standalone");
     expect(episodeRow?.data).toMatchObject({ kind: "episode", yearLabel: "1950", yearValue: 1950 });
+    expect(episodeRow?.href).toBe("/episode/standalone");
 
     expect(undated).toHaveLength(0);
   });
@@ -99,7 +106,7 @@ describe("buildTimeline", () => {
 
     expect(rows.map((row) => row.id)).toContain("dated");
     expect(undated).toHaveLength(1);
-    expect(undated[0]).toMatchObject({ id: "undated", title: "Mystery" });
+    expect(undated[0]).toMatchObject({ id: "undated", slug: "undated", title: "Mystery" });
     expect(undated[0]!.publishedLabel.startsWith("Published ")).toBe(true);
   });
 });

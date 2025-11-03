@@ -35,7 +35,7 @@ npm run dev:pipeline -- --plan  # dry pipeline check; safe for CI
   - `schema-check.mjs` – validates public/cache artefacts with AJV.
   - `migrate-legacy-caches.mjs` – transforms historic cache formats.
 - `data/` – canonical working set produced by the pipeline (RSS snapshots, intermediate JSON, LLM caches).
-- `public/` – published artefacts (`episodes.json`, `series.json`) consumed by the Next.js UI.
+- `public/` – published artefacts (`episodes.json`, `series.json`, `slug-registry.json`) consumed by the Next.js UI.
 - `schema/` – JSON Schemas governing cache & public outputs.
 - `.github/workflows/ci.yml` – lint, plan-mode pipeline, unit tests on every push/PR.
 - `package.json` – defines the pipeline scripts and installs runtime deps (`axios`, `ajv`, `xml2js`, etc.).
@@ -74,9 +74,11 @@ npm run dev:pipeline -- --plan  # dry pipeline check; safe for CI
 5. **Composition (`composer.ts`)**
    - Merges raw → programmatic → LLM layers.
    - Normalises year ranges, preferring LLM output; falls back to programmatic when missing.
+   - Resolves deterministic slugs for every series/episode and emits a global registry.
    - Writes:
-     - `public/episodes.json` (sorted by `publishedAt`, stable key ordering).
-     - `public/series.json` (sorted by first member’s publication date).
+     - `public/episodes.json` (sorted by `publishedAt`, stable key ordering, includes `slug`).
+     - `public/series.json` (sorted by first member’s publication date, includes `slug`).
+     - `public/slug-registry.json` (map of `{ slug: { type, id } }`).
 6. **Validation (`validator.ts`)**
    - Uses AJV schemas from `schema/`.
    - Ensures ID uniqueness, referential integrity, sorted serialization, and year consistency.
@@ -151,7 +153,8 @@ Plan mode allows CI to verify schema + pipeline wiring without spending tokens. 
 | `data/series-programmatic.json` | Object map | Keyed by `seriesId`. |
 | `data/episodes-llm.json`, `data/series-llm.json` | Object maps | LLM caches keyed by fingerprinted IDs. |
 | `data/errors.jsonl` | JSON Lines | Recoverable issues per run; info-level lines do not fail CI; rotate/purge as needed. |
-| `public/episodes.json`, `public/series.json` | Arrays | Stable JSON consumed directly by the Next.js UI; external consumers can fetch these static files or wrap them in an API as needed. |
+| `public/episodes.json`, `public/series.json` | Arrays | Stable JSON consumed directly by the Next.js UI; expose deterministic slugs for routing. |
+| `public/slug-registry.json` | Object map | Global slug registry consumed by the UI to resolve detail routes and prevent collisions. |
 
 All JSON is stable-sorted; repeated runs with unchanged inputs produce identical bytes (enabling diff-based deploy pipelines).
 

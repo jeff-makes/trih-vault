@@ -1,4 +1,4 @@
-import { STOP_WORDS } from "./constants.ts";
+import { STOP_WORDS } from "./constants";
 
 const DIACRITICS_REGEX = /[\u0300-\u036f]/g;
 const TYPOGRAPHIC_DASH_REGEX = /[\u2012-\u2015]/g; // various dash forms

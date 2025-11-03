@@ -96,12 +96,24 @@ export const runValidation = ({
   );
 
   const publicSeriesMap = new Map(publicSeries.map((series) => [series.seriesId, series]));
+  const usedSlugs = new Set<string>();
+
+  const ensureUniqueSlug = (slug: string, context: string) => {
+    if (!slug) {
+      throw new Error(`Missing slug for ${context}`);
+    }
+    if (usedSlugs.has(slug)) {
+      throw new Error(`Duplicate slug detected for ${context}: ${slug}`);
+    }
+    usedSlugs.add(slug);
+  };
 
   publicEpisodes.forEach((episode) => {
     const episodeId = episode.episodeId;
     if (!episodeId) {
       throw new Error("Encountered public episode without an episodeId");
     }
+    ensureUniqueSlug(episode.slug, `public episode ${episodeId}`);
     if (!rawEpisodeMap.has(episodeId)) {
       throw new Error(`Public episode ${episodeId} missing corresponding raw episode`);
     }
@@ -133,6 +145,7 @@ export const runValidation = ({
     if (!seriesId) {
       throw new Error("Encountered public series without a seriesId");
     }
+    ensureUniqueSlug(series.slug, `public series ${seriesId}`);
     if (!validateSeries(series)) {
       throw new Error(
         `Public series ${seriesId} failed schema validation:\n${formatAjvErrors(validateSeries.errors)}`

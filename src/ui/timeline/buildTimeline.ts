@@ -2,6 +2,7 @@ import type { TimelineRow } from "@/ui/timeline/layout";
 
 export type RawEpisodeInput = {
   id: string;
+  slug: string;
   cleanTitle: string;
   yearFrom: number | null;
   yearTo: number | null;
@@ -21,6 +22,7 @@ export type RawSeriesDerived = {
 
 export type RawSeriesInput = {
   id: string;
+  slug: string;
   seriesTitle: string;
   yearFrom: number | null;
   yearTo: number | null;
@@ -31,6 +33,7 @@ export type RawSeriesInput = {
 
 export type EpisodeSummary = {
   id: string;
+  slug?: string;
   title: string;
   yearLabel: string | null;
   partLabel: string | null;
@@ -38,6 +41,7 @@ export type EpisodeSummary = {
 
 export type UndatedEpisode = {
   id: string;
+  slug: string;
   title: string;
   publishedLabel: string;
 };
@@ -138,6 +142,7 @@ export function buildTimeline(options: BuildTimelineOptions): BuildTimelineResul
     .filter((episode) => !episode.seriesId)
     .map((episode) => ({
       id: episode.id,
+      slug: episode.slug,
       title: episode.cleanTitle,
       yearFrom: episode.yearFrom,
       yearTo: episode.yearTo,
@@ -150,6 +155,7 @@ export function buildTimeline(options: BuildTimelineOptions): BuildTimelineResul
       const raw = episodesById.get(episode.id);
       return {
         id: episode.id,
+        slug: raw?.slug ?? episode.slug,
         title: episode.title,
         publishedLabel: formatPublishedLabel(raw?.publishedAt ?? null)
       };
@@ -228,6 +234,7 @@ export function buildTimeline(options: BuildTimelineOptions): BuildTimelineResul
       title: seriesRecord.seriesTitle,
       yearFrom: derivedYearFrom,
       yearTo: derivedYearTo,
+      href: `/series/${seriesRecord.slug}`,
       data: {
         kind: "series" as const,
         yearLabel: formatYearRange(derivedYearFrom, derivedYearTo),
@@ -235,6 +242,7 @@ export function buildTimeline(options: BuildTimelineOptions): BuildTimelineResul
         episodeCount: resolvedEpisodeCount,
         episodes: sortedMemberEpisodes.map((episode) => ({
           id: episode.id,
+          slug: episode.slug,
           title: episode.cleanTitle,
           yearLabel:
             typeof episode.yearFrom === "number" || typeof episode.yearTo === "number"
@@ -255,6 +263,7 @@ export function buildTimeline(options: BuildTimelineOptions): BuildTimelineResul
     title: episode.title,
     yearFrom: episode.yearFrom,
     yearTo: episode.yearTo,
+    href: `/episode/${episode.slug}`,
     data: {
       kind: "episode" as const,
       yearLabel: formatYearRange(episode.yearFrom, episode.yearTo),

@@ -46,7 +46,8 @@ Implementation checklist:
   - Use the first meaningful sentence from `descriptionBlocks` as the highlight (it is already split by the programmatic cleanup).
   - Render `cleanDescriptionMarkdown` inside a `prose` container with a `CollapsibleText` component that auto-collapses beyond ~320 words and exposes “Show more”.
 - **Quick Facts**
-  - Definition-list style component fed by `yearFrom`/`yearTo`, `yearConfidence`, `keyPeople`, `keyPlaces`, `seriesTitle`, `part`, `itunesEpisode`.
+  - Definition-list style component fed by `yearFrom`/`yearTo`, `yearConfidence`, `keyPeople`, `keyPlaces`, `seriesTitle`.
+  - Show `part` only when `seriesId` exists; omit for standalone episodes. Drop `itunesEpisode` from surfaced UI unless debugging requires it.
   - Each person/place uses `PillLink` to `/people/[slug]` or `/places/[slug]`. Hide sections when arrays are empty.
 - **Connected Threads**
   - Time: link to `/timeline?from={yearFrom}&to={yearTo}` once that filter view exists. Until then, link to `/` with query params we can read later.
@@ -63,12 +64,9 @@ Implementation checklist:
   - Render `EpisodeCard` with title, year badge, series badge, short description snippet.
   - If the scorer returns fewer than three recommendations, show a friendly placeholder (“More recommendations coming soon”) so the section never feels empty.
 - **Find & Listen**
-  - Without per-platform URLs, offer generic CTAs:
-    - `Listen on Spotify` → `https://open.spotify.com/search/${encodeURIComponent(cleanTitle)}`
-    - Similar search links for Apple Podcasts and YouTube.
-    - Direct link to `audioUrl` as “Download MP3”.
-  - Include descriptive `aria-label`s for each button (e.g., “Search Spotify for {cleanTitle}”) to aid screen readers.
-  - Include note that all episodes live in the public RSS feed.
+  - Provide direct links: official site episode list, Apple Podcasts show, Spotify show, YouTube podcast feed.
+  - Include descriptive `aria-label`s for each button to aid screen readers.
+  - Optional: add a download link to `audioUrl` if desired.
 - **Keep Exploring**
   - Compute “previous/next in time” by sorting all episodes by `midYear` (fallback to publish year) and finding neighbours.
   - Provide quick era jump buttons if the episode spans a configured range (e.g., `getEraSegments(midYear)` from timeline config).
@@ -95,7 +93,7 @@ Implementation checklist:
   - “View full arc on timeline” should link to `/` with query params until timeline filters ship; flag it as TODO for dedicated routes.
 - **Episode List**
   - Ordered list grouped either by publication order or chronological order (choose whichever better mirrors timeline expectations; default to chronological using `formatYearRange`).
-  - Each item shows part badge (if present), `cleanTitle`, year badge, short snippet (first sentence from `descriptionBlocks`), and a “View episode” link.
+  - Each item shows part badge (if present), `cleanTitle`, year badge, short snippet (first sentence from `descriptionBlocks`), and links directly to the episode detail card.
   - Provide quick filters/toggles for chronological vs. publish order when useful.
   - Respect deep-link context: when navigated from an episode detail, auto-scroll or highlight the matching part.
 - **Connected Threads**
@@ -184,7 +182,7 @@ Performance: indexes can be generated once at module scope since artefacts are s
 ---
 
 ## 8. Data Prep & Open Questions
-- [ ] Extend composer to emit deterministic slugs for episodes/series and a `slug-registry.json`. Until then, land an interim helper with a TODO to replace once pipeline support arrives.
+- [x] Extend composer to emit deterministic slugs for episodes/series and a `slug-registry.json`. (`npm run dev:pipeline` now writes the registry automatically.)
 - [ ] Decide whether `keyPeople` / `keyPlaces` arrays need manual curation (dedupe aliases like “US” vs “United States”) before exposing pages backed by the raw strings.
 - [ ] Year ranges lack high-confidence flags; consider a UI treatment (e.g., tooltip when confidence ≠ `high`) and optionally run another LLM pass to tighten ranges.
 - [ ] External platform links: confirm whether we want to maintain canonical URLs per episode or continue linking to search results.
@@ -197,7 +195,7 @@ Performance: indexes can be generated once at module scope since artefacts are s
 1. ~~Implement slug helpers + temporary registry loader; wire `generateStaticParams` for `/episode/[slug]`, `/series/[seriesId]`, `/people/[slug]`, `/places/[slug]`.~~ Done — V7 helpers in `src/lib/slug/*`, registry builder `scripts/build-slug-registry.ts`, and lookup/server utilities and tests are ready for the upcoming routes.
 2. Build shared indexes (`people`, `places`, series aggregates) and similarity scoring utilities.
 3. Scaffold all four detail pages with placeholder layouts, then fill in components iteratively.
-4. Backfill composer work so the pipeline emits slugs and registry artefacts, replacing interim helpers.
+4. ~~Backfill composer work so the pipeline emits slugs and registry artefacts, replacing interim helpers.~~ Done — pipeline + scheduled publish now keep `public/slug-registry.json` in sync.
 5. QA data edge cases (missing years, empty arrays) and add Vitest coverage for slug collisions, similarity scoring, and series aggregations.
 
 Once these steps land, we can layer on timeline filters / map-like interactions without reworking the core detail views.

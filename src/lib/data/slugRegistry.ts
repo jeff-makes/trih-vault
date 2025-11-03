@@ -1,12 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-type RegistryType = "episode" | "series";
-
-export interface SlugRegistryEntry {
-  type: RegistryType;
-  id: string;
-}
+import type { SlugRegistryEntry } from "@/types";
 
 type SlugRegistry = Record<string, SlugRegistryEntry>;
 

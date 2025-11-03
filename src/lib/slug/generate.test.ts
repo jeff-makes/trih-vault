@@ -1,56 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import type { PublicEpisode, PublicSeries } from "@/types";
+import type { EpisodeSlugInput, SeriesSlugInput } from "./generate";
 
 import { generateEpisodeSlug, generateSeriesSlug } from "./generate";
 
-const baseSeries = (overrides: Partial<PublicSeries> = {}): PublicSeries => ({
-  id: overrides.id ?? "series-001",
+const baseSeries = (overrides: Partial<SeriesSlugInput> = {}): SeriesSlugInput => ({
   seriesId: overrides.seriesId ?? "series-001",
-  seriesTitle: overrides.seriesTitle ?? "Sample Series Title",
-  seriesKey: null,
-  seriesKeyRaw: null,
-  seriesGroupingConfidence: "high",
-  episodeIds: overrides.episodeIds ?? [],
-  yearFrom: null,
-  yearTo: null,
-  yearConfidence: "unknown",
-  fingerprint: "fingerprint",
-  derived: undefined,
-  memberEpisodeFingerprints: undefined,
-  tonalDescriptors: null,
-  narrativeSummary: null,
-  rssLastSeenAt: null
+  seriesTitle: overrides.seriesTitle ?? "Sample Series Title"
 });
 
-const baseEpisode = (overrides: Partial<PublicEpisode> = {}): PublicEpisode => ({
-  id: overrides.id ?? "episode-001",
+const baseEpisode = (overrides: Partial<EpisodeSlugInput> = {}): EpisodeSlugInput => ({
   episodeId: overrides.episodeId ?? "episode-001",
-  title: overrides.title ?? "Episode Title",
-  cleanTitle: overrides.cleanTitle ?? overrides.title ?? "Episode Title",
-  publishedAt: overrides.publishedAt ?? "2024-01-01T00:00:00.000Z",
-  description: overrides.description ?? "",
-  cleanDescriptionMarkdown: overrides.cleanDescriptionMarkdown ?? "",
-  cleanDescriptionText: overrides.cleanDescriptionText ?? "",
-  descriptionBlocks: overrides.descriptionBlocks ?? [],
-  audioUrl: overrides.audioUrl ?? "https://example.com/audio.mp3",
-  rssLastSeenAt: overrides.rssLastSeenAt ?? "2024-01-01T00:00:00.000Z",
-  itunesEpisode: overrides.itunesEpisode ?? null,
-  cleanupVersion: overrides.cleanupVersion ?? 1,
-  credits: overrides.credits,
-  fingerprint: overrides.fingerprint ?? "fingerprint",
-  derived: overrides.derived,
+  cleanTitle: overrides.cleanTitle ?? "Episode Title",
   part: overrides.part ?? null,
-  seriesId: overrides.seriesId ?? null,
-  seriesKey: overrides.seriesKey ?? null,
-  seriesKeyRaw: overrides.seriesKeyRaw ?? null,
-  seriesGroupingConfidence: overrides.seriesGroupingConfidence ?? "high",
-  keyPeople: overrides.keyPeople ?? [],
-  keyPlaces: overrides.keyPlaces ?? [],
-  keyThemes: overrides.keyThemes ?? [],
-  yearFrom: overrides.yearFrom ?? null,
-  yearTo: overrides.yearTo ?? null,
-  yearConfidence: overrides.yearConfidence ?? "unknown"
+  seriesId: overrides.seriesId ?? null
 });
 
 describe("generateSeriesSlug", () => {

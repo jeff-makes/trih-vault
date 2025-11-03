@@ -1,0 +1,44 @@
+.container {
+  border-radius: 16px;
+  border: 1px solid rgba(14, 116, 144, 0.18);
+  background: linear-gradient(145deg, rgba(14, 116, 144, 0.1), rgba(14, 116, 144, 0.03));
+  padding: 1.4rem 1.6rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #0ea5e9;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.link:hover,
+.link:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.35);
+}
+
+.link:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}

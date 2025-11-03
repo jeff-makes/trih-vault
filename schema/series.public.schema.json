@@ -6,6 +6,7 @@
   "required": [
     "id",
     "seriesId",
+    "slug",
     "seriesGroupingConfidence",
     "episodeIds",
     "yearFrom",
@@ -20,6 +21,7 @@
   "properties": {
     "id": { "type": "string", "minLength": 1 },
     "seriesId": { "type": "string", "minLength": 1 },
+    "slug": { "type": "string", "minLength": 1 },
     "seriesKey": { "type": ["string", "null"] },
     "seriesKeyRaw": { "type": ["string", "null"] },
     "seriesGroupingConfidence": {

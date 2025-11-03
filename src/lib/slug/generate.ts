@@ -1,8 +1,18 @@
-import type { PublicEpisode, PublicSeries } from "@/types";
+import { DOMAIN_TOPICS } from "./constants";
+import { slugify } from "./slugify";
+import { deriveSubtitleSource, extractPartNumber, stripLeadingNumber } from "./titleUtils";
 
-import { DOMAIN_TOPICS } from "./constants.ts";
-import { slugify } from "./slugify.ts";
-import { deriveSubtitleSource, extractPartNumber, stripLeadingNumber } from "./titleUtils.ts";
+export interface SeriesSlugInput {
+  seriesId: string;
+  seriesTitle: string;
+}
+
+export interface EpisodeSlugInput {
+  episodeId: string;
+  cleanTitle: string;
+  part: number | null;
+  seriesId: string | null;
+}
 
 const MAX_SERIES_TOKENS = 4;
 const MAX_EPISODE_TOKENS = 4;
@@ -72,7 +82,7 @@ const dedupeTokens = (existing: string[], candidates: string[]): string[] => {
   return results;
 };
 
-export const generateSeriesSlug = (series: PublicSeries, taken: Set<string>): string => {
+export const generateSeriesSlug = (series: SeriesSlugInput, taken: Set<string>): string => {
   const { seriesId, seriesTitle } = series;
 
   const baseSlug = slugify(seriesTitle);
@@ -90,7 +100,7 @@ interface SeriesSlugLookup {
 }
 
 export const generateEpisodeSlug = (
-  episode: PublicEpisode,
+  episode: EpisodeSlugInput,
   seriesLookup: SeriesSlugLookup,
   taken: Set<string>
 ): string => {

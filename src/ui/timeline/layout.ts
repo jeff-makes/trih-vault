@@ -3,6 +3,8 @@ export type TimelineRow<Data = unknown> = {
   title: string;
   yearFrom: number | null;
   yearTo?: number | null;
+  href?: string;
+  slug?: string;
   data?: Data;
 };
 

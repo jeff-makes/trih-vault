@@ -84,9 +84,12 @@ h4 {
 
 .timeline {
   position: relative;
-  padding-left: 40px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
 }
 
 .timeline::before {
@@ -94,20 +97,25 @@ h4 {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 2px;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.05));
 }
 
 .timeline__entry {
   position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  width: min(100%, 720px);
+  margin-inline: auto;
 }
 
 .timeline__gap {
   position: relative;
+  width: min(100%, 720px);
+  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .timeline__gap::before {
@@ -115,16 +123,13 @@ h4 {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 2px;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.03));
 }
 
 .timeline__gap-marker {
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -135,7 +140,6 @@ h4 {
   pointer-events: auto;
   width: 44px;
   height: 44px;
-  margin-left: -22px;
   border-radius: 16px;
   border: 1px solid rgba(17, 24, 39, 0.12);
   background: #ffffff;
@@ -188,15 +192,17 @@ h4 {
 }
 
 .timeline__marker {
-  flex: none;
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  transform: translate(-50%, -50%);
   width: 16px;
   height: 16px;
   border-radius: 999px;
   border: 3px solid #ffffff;
   background: #2c7be5;
   box-shadow: 0 0 0 2px rgba(44, 123, 229, 0.2);
-  position: relative;
-  top: 12px;
+  z-index: 2;
 }
 
 .timeline__marker--series {
@@ -205,13 +211,18 @@ h4 {
 }
 
 .timeline__card {
+  position: relative;
   background: #ffffff;
   border-radius: 16px;
   padding: 16px 20px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   min-width: 0;
-  flex: 1;
+  width: 100%;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  margin: 16px auto 0;
 }
 
 .timeline__card--series {
@@ -240,18 +251,17 @@ h4 {
 }
 
 .timeline__series-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
   color: inherit;
   font: inherit;
-  text-align: left;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  gap: 12px;
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 
 .timeline__title-group {
@@ -270,9 +280,9 @@ h4 {
   outline-offset: 4px;
 }
 
-.timeline__series-toggle-icon {
-  font-size: 24px;
-  line-height: 1;
+.timeline__series-toggle:hover {
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
 }
 
 .timeline__series-list {
@@ -290,6 +300,21 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.timeline__series-episode:hover {
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.timeline__series-episode:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
 }
 
 .timeline__series-episode-title {
@@ -325,4 +350,37 @@ h4 {
   .timeline::before {
     left: 10px;
   }
+}
+.timeline__card:hover,
+.timeline__card:focus-visible {
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
+a.timeline__card:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}
+
+.timeline__series-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.timeline__series-link {
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.timeline__series-link:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}
+
+.timeline__series-toggle-icon {
+  font-size: 20px;
+  line-height: 1;
 }

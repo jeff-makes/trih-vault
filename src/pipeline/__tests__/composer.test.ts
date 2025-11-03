@@ -204,7 +204,7 @@ describe("runComposeStep", () => {
       seriesLlmCache
     } = createSampleData();
 
-    const { publicEpisodes, publicSeries } = runComposeStep({
+    const { publicEpisodes, publicSeries, slugRegistry } = runComposeStep({
       rawEpisodes,
       programmaticEpisodes,
       programmaticSeries,
@@ -216,10 +216,22 @@ describe("runComposeStep", () => {
     expect(publicEpisodes[0].episodeId).toBe("ep-1");
     expect(publicEpisodes[0].keyPeople).toEqual(["Horatio Nelson"]);
     expect(publicEpisodes[1].keyPeople).toEqual([]);
+    expect(publicEpisodes[0].slug).toBeTruthy();
+    expect(publicEpisodes[1].slug).toBeTruthy();
+    expect(new Set(publicEpisodes.map((episode) => episode.slug)).size).toBe(publicEpisodes.length);
 
     expect(publicSeries).toHaveLength(1);
     expect(publicSeries[0].seriesTitle).toBe("The Trafalgar Campaign");
     expect(publicSeries[0].tonalDescriptors).toEqual(["dramatic", "historical"]);
+    expect(publicSeries[0].slug).toBeTruthy();
+
+    expect(Object.values(slugRegistry)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ type: "episode", id: "ep-1" }),
+        expect.objectContaining({ type: "episode", id: "ep-2" }),
+        expect.objectContaining({ type: "series", id: "series-20240101" })
+      ])
+    );
   });
 });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import type { TimelineDisplayRow, TimelineSeriesRowData, TimelineEpisodeRowData, UndatedEpisode } from "./buildTimeline";
 import { computeTimelineLayout } from "./layout";
@@ -116,41 +117,55 @@ export function Timeline(props: TimelineProps) {
         const seriesData = data as TimelineSeriesRowData;
         const partsLabel = `${seriesData.episodeCount} part${seriesData.episodeCount === 1 ? "" : "s"}`;
 
+        const seriesHref = row.href ?? `/series/${row.id}`;
+
         return (
           <Fragment key={key}>
             {anchors}
             <div className="timeline__entry timeline__entry--series" style={{ marginTop }}>
               <span className="timeline__marker timeline__marker--series" aria-hidden />
               <div className="timeline__card timeline__card--series">
-                <div className="timeline__year">{seriesData.yearLabel}</div>
-                <button
-                  type="button"
-                  className="timeline__series-toggle"
-                  onClick={() => toggleSeries(row.id)}
-                  aria-expanded={isExpanded}
-                >
-                  <span className="timeline__title-group">
-                    <span className="timeline__title">{row.title}</span>
-                    <span className="timeline__meta timeline__meta--series">{partsLabel}</span>
-                  </span>
-                  <span className="timeline__series-toggle-icon">{isExpanded ? "−" : "+"}</span>
-                </button>
+                <div className="timeline__series-header">
+                  <Link href={seriesHref} className="timeline__series-link">
+                    <div className="timeline__year">{seriesData.yearLabel}</div>
+                    <span className="timeline__title-group">
+                      <span className="timeline__title">{row.title}</span>
+                      <span className="timeline__meta timeline__meta--series">{partsLabel}</span>
+                    </span>
+                  </Link>
+                  <button
+                    type="button"
+                    className="timeline__series-toggle"
+                    onClick={() => toggleSeries(row.id)}
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? "Collapse series episodes" : "Expand series episodes"}
+                  >
+                    <span className="timeline__series-toggle-icon" aria-hidden>
+                      {isExpanded ? "−" : "+"}
+                    </span>
+                  </button>
+                </div>
 
                 {isExpanded ? (
                   <ul className="timeline__series-list">
-                    {seriesData.episodes.map((episode) => (
-                      <li key={episode.id} className="timeline__series-episode">
-                        <div className="timeline__series-episode-title">
-                          {episode.title}
-                          {episode.partLabel ? (
-                            <span className="timeline__series-part">{episode.partLabel}</span>
-                          ) : null}
-                        </div>
-                        {episode.yearLabel ? (
-                          <div className="timeline__series-episode-year">{episode.yearLabel}</div>
-                        ) : null}
-                      </li>
-                    ))}
+                    {seriesData.episodes.map((episode) => {
+                      const episodeHref = episode.slug ? `/episode/${episode.slug}` : `/episode/${episode.id}`;
+                      return (
+                        <li key={episode.id}>
+                          <Link href={episodeHref} className="timeline__series-episode">
+                            <div className="timeline__series-episode-title">
+                              {episode.title}
+                              {episode.partLabel ? (
+                                <span className="timeline__series-part">{episode.partLabel}</span>
+                              ) : null}
+                            </div>
+                            {episode.yearLabel ? (
+                              <div className="timeline__series-episode-year">{episode.yearLabel}</div>
+                            ) : null}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : null}
               </div>
@@ -160,16 +175,17 @@ export function Timeline(props: TimelineProps) {
       }
 
       const episodeData = data as TimelineEpisodeRowData | undefined;
+      const episodeHref = row.href ?? `/episode/${row.id}`;
 
       return (
         <Fragment key={key}>
           {anchors}
           <div className="timeline__entry" style={{ marginTop }}>
             <span className="timeline__marker" aria-hidden />
-            <div className="timeline__card">
+            <Link href={episodeHref} className="timeline__card timeline__card--episode">
               <div className="timeline__year">{episodeData?.yearLabel ?? "Undated"}</div>
               <div className="timeline__title">{row.title}</div>
-            </div>
+            </Link>
           </div>
         </Fragment>
       );

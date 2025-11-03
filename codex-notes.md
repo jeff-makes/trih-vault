@@ -18,11 +18,13 @@
 - Frontend timeline polish: BCE-aware ranges, collapsible long gaps, and updated UI PRD alignment.
 
 ## Next Steps
-- Hook the slug registry builder into the pipeline/publish flow so artefacts + slugs refresh together.
-- Build the shared people/places indexes + similarity scoring utilities ahead of the detail pages.
+- ~~Hook the slug registry builder into the pipeline/publish flow so artefacts + slugs refresh together.~~ Done — composer now emits slugs and the publish workflow refreshes the registry automatically.
+- ~~Refresh timeline + detail pages with slug-aware links and detail components.~~ Done — series/episode pages live with shared UI + indexes; timeline now links straight to detail views.
+- ~~Build the shared people/places indexes + similarity scoring utilities ahead of the detail pages.~~ Done — indexes power the new detail components and related suggestions.
 - Monitor the scheduled GitHub Actions publish + Vercel revalidation webhook once deployed to ensure artefacts update as expected.
 
 ## Recent Changes
+- **2025-11-03:** Timeline re-centered with linked episode/series cards, responsive mobile layout, and slug-aware data mappers feeding the new detail pages.
 - **2025-11-02:** Added deterministic slug registry tooling (helpers, build script, tests) and refreshed PRDs/detail-view docs with V7 slug rules + layout notes.
 - **2025-11-01:** Timeline now keeps BCE spans intact, collapses large gaps with spine-mounted markers, and scales spacing at 1.5px/year; PRDs updated accordingly.
 - **2025-10-31:** Replaced Vercel cron/Blob pipeline with scheduled GitHub Actions publish that auto-commits artefacts and calls the Vercel revalidation webhook.

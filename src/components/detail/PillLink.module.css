@@ -1,0 +1,51 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: rgba(17, 24, 39, 0.08);
+  color: #111827;
+  border: 1px solid transparent;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  will-change: transform;
+}
+
+.pill:hover,
+.pill:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.pill:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.pill--people {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.pill--places {
+  background: rgba(14, 159, 110, 0.12);
+  color: #047857;
+}
+
+.pill--series {
+  background: rgba(251, 133, 0, 0.15);
+  color: #c2410c;
+}
+
+.pill--episode {
+  background: rgba(99, 102, 241, 0.14);
+  color: #4338ca;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.95em;
+}

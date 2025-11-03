@@ -8,3 +8,16 @@ export {
   resetSlugRegistryCache,
   findSlugEntry
 } from "./slugRegistry";
+export {
+  getAllEpisodes,
+  getAllSeries,
+  getEpisodeById,
+  getEpisodeBySlug,
+  getSeriesById,
+  getSeriesBySlug,
+  getEpisodesForSeries,
+  getSeriesForEpisode,
+  getSeriesAggregate,
+  getEpisodeContext,
+  resetDataCaches
+} from "./catalog";

@@ -89,9 +89,9 @@ Composer (or the registry build step) writes the resolved slugs onto artefacts a
 
 ## 6. Timeline Experience (Home)
 
-- Vertical spine with decade/century markers (markers sticky as the list scrolls).
+- Vertical spine with decade/century markers (markers sticky as the list scrolls) centred beneath cards across breakpoints.
 - **Series cards**: title, part-count badge, optional year-span chip; expands inline to list parts with direct links.
-- **Episode cards**: compact card/dot with title; links to episode detail.
+- **Episode cards**: full-width cards (within safe area) that link to episode detail; include year range as leading text.
 - **Gap markers**: large empty spans collapse to a spine-mounted vertical ellipsis button; accessible labels announce the skipped years and the gap expands on click.
 - BCE support: negative `yearFrom`/`yearTo` render with `BC` suffixes (e.g. “264 BC – 216 BC”).
 - Ordering rules:
@@ -216,7 +216,7 @@ export const ERAS = [
 ## 9. Detail Views
 
 **Episode**
-- Title + optional “Part N” badge.
+- Title + optional “Part N” badge (hidden when standalone).
 - People and Places chips (linking back to filtered search in post-v1 roadmap).
 - Summary: short teaser (~160–200 chars) above the fold; full clean description below.
 - Embedded HTML5 audio player (`<audio controls src={audioUrl}>`).
@@ -224,7 +224,7 @@ export const ERAS = [
 
 **Series**
 - Title, narrative summary, episode count, optional year-span chip.
-- Ordered list of parts with publication years and part badges.
+- Ordered list of parts with publication years and part badges; child rows link to episode detail pages.
 - CTA to scroll timeline back to the series position (deep link anchor).
 
 Accessibility: provide `aria-expanded` for collapsible sections, descriptive button labels, and ensure screen-reader ordering follows the visual layout.

@@ -131,6 +131,7 @@ export interface PublicEpisode {
   id: string;
   episodeId: string;
   title: string;
+  slug: string;
   publishedAt: string;
   description: string;
   audioUrl: string;
@@ -160,6 +161,7 @@ export interface PublicEpisode {
 export interface PublicSeries {
   id: string;
   seriesId: string;
+  slug: string;
   seriesKey: string | null;
   seriesKeyRaw: string | null;
   seriesGroupingConfidence: "high" | "medium" | "low";
@@ -190,6 +192,11 @@ export interface DailyRssSnapshot {
   items: unknown[];
 }
 
+export interface SlugRegistryEntry {
+  type: "episode" | "series";
+  id: string;
+}
+
 export interface PipelineState {
   rawEpisodes: RawEpisode[];
   programmaticEpisodes: Record<string, ProgrammaticEpisode>;
@@ -199,4 +206,5 @@ export interface PipelineState {
   publicEpisodes: PublicEpisode[];
   publicSeries: PublicSeries[];
   errors: ErrorLedgerEntry[];
+  slugRegistry: Record<string, SlugRegistryEntry>;
 }

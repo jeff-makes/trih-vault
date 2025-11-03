@@ -15,6 +15,7 @@ import {
   ProgrammaticEpisode,
   ProgrammaticSeries,
   RawEpisode,
+  ErrorLedgerEntry,
   YearConfidence
 } from "@/types";
 import { SERIES_OVERRIDES } from "@/config/seriesOverrides";
@@ -64,6 +65,7 @@ interface LocalPipelineOptions {
   forceSeriesIds?: Set<string>;
   forceAllEpisodes?: boolean;
   forceAllSeries?: boolean;
+  skipLlm?: boolean;
 }
 
 const YEAR_CONFIDENCE_RANK: Record<YearConfidence, number> = {
@@ -157,6 +159,7 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
   const rssSnapshotPath = path.join(dataDir, "source", `rss.${new Date().toISOString().slice(0, 10)}.json`);
   const publicEpisodesPath = path.join(publicDir, "episodes.json");
   const publicSeriesPath = path.join(publicDir, "series.json");
+  const slugRegistryPath = path.join(publicDir, "slug-registry.json");
   const episodeSchemaPath = path.join(process.cwd(), "schema", "episode.public.schema.json");
   const seriesSchemaPath = path.join(process.cwd(), "schema", "series.public.schema.json");
   const cacheSchemaPath = path.join(process.cwd(), "schema", "cache.llm.schema.json");
@@ -199,16 +202,31 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
       ? new Set(Array.from(seriesIdsToForce).filter((id) => programmaticSeries[id]))
       : undefined;
 
-  const episodeLlmResult = await runLlmEpisodeEnrichment(programmaticEpisodes, existingEpisodeLlmCache, {
-    maxLlmCalls: options.maxEpisodeLlmCalls,
-    forceIds: forceEpisodeIds,
-    planOnly: options.plan
-  });
-  const seriesLlmResult = await runLlmSeriesEnrichment(programmaticSeries, existingSeriesLlmCache, {
-    maxLlmCalls: options.maxSeriesLlmCalls,
-    forceIds: forceSeriesIds,
-    planOnly: options.plan
-  });
+  const skipLlm = options.skipLlm ?? false;
+  const episodeLlmResult = skipLlm
+    ? {
+        cache: { ...existingEpisodeLlmCache },
+        errors: [] as ErrorLedgerEntry[],
+        callsMade: 0,
+        planned: [] as { episodeId: string; fingerprint: string }[]
+      }
+    : await runLlmEpisodeEnrichment(programmaticEpisodes, existingEpisodeLlmCache, {
+        maxLlmCalls: options.maxEpisodeLlmCalls,
+        forceIds: forceEpisodeIds,
+        planOnly: options.plan
+      });
+  const seriesLlmResult = skipLlm
+    ? {
+        cache: { ...existingSeriesLlmCache },
+        errors: [] as ErrorLedgerEntry[],
+        callsMade: 0,
+        planned: [] as { seriesId: string; fingerprint: string }[]
+      }
+    : await runLlmSeriesEnrichment(programmaticSeries, existingSeriesLlmCache, {
+        maxLlmCalls: options.maxSeriesLlmCalls,
+        forceIds: forceSeriesIds,
+        planOnly: options.plan
+      });
 
   const updatedEpisodeLlmCache = episodeLlmResult.cache;
   applyEpisodeYearSpans(programmaticEpisodes, updatedEpisodeLlmCache);
@@ -219,6 +237,10 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
   applySeriesYearSpans(programmaticSeries, programmaticEpisodes);
 
   const errors = [...episodeLlmResult.errors, ...seriesLlmResult.errors];
+
+  if (skipLlm) {
+    console.log("Skipping LLM enrichment — reusing existing caches.");
+  }
 
   if (options.plan) {
     if (episodeLlmResult.planned.length === 0 && seriesLlmResult.planned.length === 0) {
@@ -257,7 +279,7 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
     return;
   }
 
-  const { publicEpisodes, publicSeries } = runComposeStep({
+  const { publicEpisodes, publicSeries, slugRegistry } = runComposeStep({
     rawEpisodes: updatedRawEpisodes,
     programmaticEpisodes,
     programmaticSeries,
@@ -295,6 +317,7 @@ export const runLocalPipeline = async (options: LocalPipelineOptions = {}): Prom
     await writeJsonFile(seriesLlmCachePath, cleanedSeriesLlmCache);
     await writeJsonFile(publicEpisodesPath, publicEpisodes);
     await writeJsonFile(publicSeriesPath, publicSeries);
+    await writeJsonFile(slugRegistryPath, slugRegistry);
   } else {
     console.log("Dry run enabled — skipping filesystem writes.");
   }
@@ -343,6 +366,9 @@ if (require.main === module) {
           }
           i += 1;
         }
+        break;
+      case "--skip-llm":
+        options.skipLlm = true;
         break;
       case "--force-llm":
         {
