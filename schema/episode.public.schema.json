@@ -2,6 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://trih-browser/schema/episode.public.schema.json",
   "title": "PublicEpisode",
+  "definitions": {
+    "topicRef": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "minLength": 1 },
+        "isPending": { "type": "boolean" },
+        "notes": { "type": ["string", "null"] }
+      },
+      "required": ["id", "label", "slug"],
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "id",
@@ -27,6 +41,7 @@
     "keyPeople",
     "keyPlaces",
     "keyThemes",
+    "keyTopics",
     "yearFrom",
     "yearTo",
     "yearConfidence"
@@ -85,6 +100,13 @@
       "items": { "type": "string" },
       "minItems": 0,
       "maxItems": 8,
+      "uniqueItems": true
+    },
+    "keyTopics": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/topicRef" },
+      "minItems": 0,
+      "maxItems": 3,
       "uniqueItems": true
     },
     "yearFrom": { "type": ["integer", "null"], "minimum": -9999, "maximum": 9999 },

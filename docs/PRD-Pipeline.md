@@ -145,6 +145,7 @@ Explicit field inventories for each artefact:
 | `keyPeople` | string[] | Required | Max 12, unique, hosts removed, whitespace-trimmed. |
 | `keyPlaces` | string[] | Required | Max 12, unique, whitespace-trimmed. |
 | `keyThemes` | string[] | Required | Between 3 and 8 entries, kebab-case, trimmed. |
+| `keyTopics` | object[] | Required | Up to 3 entries referencing the curated registry. Each item = `{ id, label, slug, isPending?, notes? }`. |
 | `yearFrom` | number \| null | Required | Numeric year or null. |
 | `yearTo` | number \| null | Required | Numeric year or null. |
 | `yearConfidence` | string | Required | Enum defined above. |
@@ -197,6 +198,7 @@ Explicit field inventories for each artefact:
 | `keyPeople` | string[] | Required | LLM enrichment. |
 | `keyPlaces` | string[] | Required | LLM enrichment. |
 | `keyThemes` | string[] | Required | LLM enrichment. |
+| `keyTopics` | object[] | Optional (v1) | Array of `{ id, label, slug, isPending? }` topic refs sourced from the curated registry. Required once the LLM prompt ships. |
 | `yearFrom` | number \| null | Required | LLM-derived or programmatic fallback. |
 | `yearTo` | number \| null | Required | LLM-derived or programmatic fallback. |
 | `yearConfidence` | string | Required | Highest confidence among sources; prefer LLM. |
@@ -339,12 +341,22 @@ Identify key historical figures mentioned. Do NOT include the hosts, Tom Holland
 Identify key geographical places or locations central to the narrative.
 Infer a numeric year span (yearFrom, yearTo) for the main historical period discussed. If the episode covers multiple distinct periods or no specific historical period (e.g., mythology, ghosts), you MUST return `null` for both yearFrom and yearTo.
 Extract up to five short, key themes or topics that summarize the episode's subject matter.
+Select up to three curated key topics from the provided registry. Only emit `topicId` values that exist in the registry. If no topic applies, you may propose ONE new topic that follows the naming rules (Title Case, 1–4 words). Mark proposed topics with `\"isPending\": true` and include a short `\"notes\"` string explaining why the new topic is needed.
 Return your analysis ONLY as a single, valid JSON object with the following schema:
 ```json
 {
   "keyPeople": ["string"],
   "keyPlaces": ["string"],
   "keyThemes": ["string"],
+  "keyTopics": [
+    {
+      "id": "string",
+      "label": "string",
+      "slug": "string",
+      "isPending": boolean,
+      "notes": "string | null"
+    }
+  ],
   "yearFrom": number | null,
   "yearTo": number | null
 }
@@ -359,6 +371,9 @@ Expected Output:
   "keyPeople": ["Horatio Nelson", "Emma Hamilton", "Napoleon Bonaparte"],
   "keyPlaces": ["Britain", "France", "Spain", "Trafalgar"],
   "keyThemes": ["Napoleonic Wars", "Naval Warfare", "British Navy", "French Invasion Threat", "Trafalgar Campaign"],
+  "keyTopics": [
+    { "id": "napoleonic-wars", "label": "Napoleonic Wars", "slug": "napoleonic-wars", "isPending": false }
+  ],
   "yearFrom": 1803,
   "yearTo": 1805
 }
@@ -369,6 +384,7 @@ If a span cannot be determined, both `yearFrom` and `yearTo` must be returned as
   "keyPeople": ["Perseus", "Medusa"],
   "keyPlaces": ["Ancient Greece"],
   "keyThemes": ["mythology", "heroic-quests", "monsters"],
+  "keyTopics": [],
   "yearFrom": null,
   "yearTo": null
 }
@@ -425,6 +441,7 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
   - `boilerplateMarkers`: arrays of strings to remove.
   - `creditPatterns`: named regex patterns for credit extraction.
   - `htmlCollapseRules`: directives for collapsing `<br>` spam and redundant tags.
+- Topic taxonomy lives in `data/rules/topics.json`. Each entry declares `{ id, label, slug, aliases[], description }` and must follow the naming rules documented in `docs/topics-registry.md`. This file is the source of truth for curated `keyTopics`.
 - `stripHtml` must collapse `<br>` spam using the YAML-configured rules.
 - Cleanup scripts load rules from YAML at runtime; no hard-coded markers remain in code.
 - Maintain unit tests under `tests/cleanup/` covering a representative sample corpus to guard against regressions.
@@ -444,7 +461,7 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
   - Trim whitespace on every string, dropping entries shorter than two characters.
   - Before de-duplicating string arrays (e.g., `keyPeople`), canonicalise entries by trimming whitespace, applying Unicode NFKD normalisation, stripping diacritics, and lowercasing for comparison. Preserve the original casing from the first occurrence in the stored array.
   - De-duplicate arrays while preserving original order.
-  - Enforce array length constraints and kebab-case for `keyThemes`.
+  - Enforce array length constraints and kebab-case for `keyThemes`; ensure every `keyTopics[].id` exists in `data/rules/topics.json` unless `isPending: true`.
 - Cache keys remain `${itemId}:${fingerprint}`.
 - `data/series-llm.json` may omit `seriesTitle` when status is not `ok`; compose will fall back to programmatic defaults.
 
@@ -494,7 +511,7 @@ Return your analysis ONLY as a single, valid JSON object with the following sche
      - `yearFrom <= yearTo` whenever both values are non-null.
      - When `part` is non-null, `seriesId` MUST be non-null.
   3. Validate data hygiene:
-     - Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, derived tags) contain no empty strings and are de-duplicated.
+     - Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, `keyTopics`, derived tags) contain no empty strings and are de-duplicated; `keyTopics` also validates registry membership.
      - Enumerated confidence values match the declared enums.
      - Object keys follow the stable ordering helper (fail validation if unsorted serialisation is detected).
   4. RSS provenance checks:
@@ -559,7 +576,7 @@ Each stage reads the previous layer and only appends or updates the keyed object
 
 ### 11.5 LLM Enrichment
 - Episode and series scripts read the programmatic layer, filter for items whose fingerprints lack cached responses, and call OpenAI once per item unless `--force-llm <ID>` is supplied to ignore caches for specific IDs.
-- Episode prompts must ignore hosts and boilerplate credits, returning only the minimal schema.
+- Episode prompts must ignore hosts and boilerplate credits, returning only the minimal schema plus curated `keyTopics` pulled from the registry snapshot supplied in the prompt payload.
 - Series prompts may supply titles, summaries, and tonal descriptors; when unavailable or status is not `ok`, compose falls back to programmatic defaults.
 - Use the lightweight client in `vendor/openai` and the shared helper for retries/backoff.
 - Default to the `gpt-5-nano` model (no temperature parameter supported); fall back to the designated lesser model when the primary is unavailable.
@@ -581,12 +598,14 @@ Each stage reads the previous layer and only appends or updates the keyed object
   "keyPeople": string[] (max 12, unique, no hosts),
   "keyPlaces": string[] (max 12, unique),
   "keyThemes": string[] (3–8, kebab-case, unique),
+  "keyTopics": TopicRef[] (0–3, curated IDs, unique),
   "yearFrom": number \| null,
   "yearTo": number \| null,
   "yearConfidence": "high" | "medium" | "low" | "unknown"
 }
 ```
 - Validator trims whitespace, de-duplicates arrays, and drops entries shorter than 2 characters before persistence.
+- `TopicRef` is `{ id: string, label: string, slug: string, isPending?: boolean, notes?: string | null }`. Proposed topics MUST set `isPending: true`, emit a short `notes` string in the raw cache entry, and trigger a ledger entry for review.
 
 ## 13. Series Title Fallback
 - Programmatic fallback `seriesTitleFallback = cleaned seriesKey` ensures compose does not block on LLM availability.
@@ -597,10 +616,11 @@ Each stage reads the previous layer and only appends or updates the keyed object
 - Validation remains the gatekeeper for exit codes.
 - Each ledger entry must include a `level` field constrained to the enum `"info" | "warn" | "error"` to enable filtering.
 - Include log entries for LLM errors, cleanup anomalies, and compose fallbacks.
+- When the LLM proposes a new topic (`isPending: true`), emit a `level: "info"` ledger entry with `details.topicProposal` so maintainers can approve and append it to `data/rules/topics.json`.
 - Rotate `data/errors.jsonl` daily via CI into `data/errors/errors.YYYY-MM-DD.jsonl`, retaining the most recent 30 days by default.
 
 ## 15. Validation-Adjacent Guarantees
-- Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, `episodeIds`, derived tags) must be de-duplicated.
+- Arrays (`keyPeople`, `keyPlaces`, `keyThemes`, `keyTopics`, `episodeIds`, derived tags) must be de-duplicated.
 - No empty strings or whitespace-only entries are permitted.
 - File size and ordering remain predictable via the stable serialiser.
 

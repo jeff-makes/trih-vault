@@ -10,6 +10,7 @@ export interface EpisodeCardProps {
   showPeopleCount?: number;
   showPlacesCount?: number;
   showThemesCount?: number;
+  showTopicsCount?: number;
   seriesHref?: string | null;
   seriesLabel?: string | null;
 }
@@ -26,12 +27,14 @@ export function EpisodeCard({
   showPeopleCount = 3,
   showPlacesCount = 2,
   showThemesCount = 0,
+  showTopicsCount = 2,
   seriesHref,
   seriesLabel
 }: EpisodeCardProps): JSX.Element {
   const people = (episode.keyPeople ?? []).slice(0, showPeopleCount);
   const places = (episode.keyPlaces ?? []).slice(0, showPlacesCount);
   const themes = (episode.keyThemes ?? []).slice(0, showThemesCount);
+  const topics = (episode.keyTopics ?? []).slice(0, showTopicsCount);
   const yearFrom = formatYear(episode.yearFrom ?? null);
   const yearTo = formatYear(episode.yearTo ?? null);
 
@@ -75,6 +78,16 @@ export function EpisodeCard({
         {places.map((place) => (
           <PillLink key={place} href={`/places/${encodeURIComponent(place)}`} variant="places">
             {place}
+          </PillLink>
+        ))}
+        {topics.map((topic) => (
+          <PillLink
+            key={topic.id}
+            href={`/search?topic=${encodeURIComponent(topic.slug)}`}
+            variant="topics"
+            title={topic.isPending ? "Pending topic proposal" : undefined}
+          >
+            {topic.label}
           </PillLink>
         ))}
         {themes.map((theme) => (

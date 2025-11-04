@@ -44,6 +44,11 @@
   color: #4338ca;
 }
 
+.pill--topics {
+  background: rgba(236, 72, 153, 0.15);
+  color: #be185d;
+}
+
 .icon {
   display: inline-flex;
   align-items: center;

@@ -33,7 +33,8 @@ export interface SimilarSeries {
 const buildEpisodeFeatureSets = (episode: PublicEpisode) => ({
   people: toSet(episode.keyPeople),
   places: toSet(episode.keyPlaces),
-  themes: toSet(episode.keyThemes)
+  themes: toSet(episode.keyThemes),
+  topics: new Set((episode.keyTopics ?? []).map((topic) => topic.id))
 });
 
 export const scoreEpisodeSimilarity = (target: PublicEpisode, candidate: PublicEpisode): number => {
@@ -47,8 +48,9 @@ export const scoreEpisodeSimilarity = (target: PublicEpisode, candidate: PublicE
   const peopleScore = jaccard(targetFeatures.people, candidateFeatures.people);
   const placesScore = jaccard(targetFeatures.places, candidateFeatures.places);
   const themeScore = jaccard(targetFeatures.themes, candidateFeatures.themes);
+  const topicScore = jaccard(targetFeatures.topics, candidateFeatures.topics);
 
-  let score = peopleScore * 0.5 + placesScore * 0.3 + themeScore * 0.2;
+  let score = peopleScore * 0.45 + placesScore * 0.25 + themeScore * 0.15 + topicScore * 0.15;
 
   if (target.seriesId && candidate.seriesId && target.seriesId === candidate.seriesId) {
     score += 0.25; // strong bonus for same series membership
@@ -82,14 +84,16 @@ const buildSeriesFeatureSets = (series: PublicSeries) => {
   const people = new Set<string>();
   const places = new Set<string>();
   const themes = new Set<string>();
+  const topics = new Set<string>();
 
   members.forEach((episode) => {
     (episode.keyPeople ?? []).forEach((person) => people.add(person));
     (episode.keyPlaces ?? []).forEach((place) => places.add(place));
     (episode.keyThemes ?? []).forEach((theme) => themes.add(theme));
+    (episode.keyTopics ?? []).forEach((topic) => topics.add(topic.id));
   });
 
-  return { people, places, themes };
+  return { people, places, themes, topics };
 };
 
 export const scoreSeriesSimilarity = (target: PublicSeries, candidate: PublicSeries): number => {
@@ -103,8 +107,9 @@ export const scoreSeriesSimilarity = (target: PublicSeries, candidate: PublicSer
   const peopleScore = jaccard(targetFeatures.people, candidateFeatures.people);
   const placesScore = jaccard(targetFeatures.places, candidateFeatures.places);
   const themeScore = jaccard(targetFeatures.themes, candidateFeatures.themes);
+  const topicScore = jaccard(targetFeatures.topics, candidateFeatures.topics);
 
-  const score = peopleScore * 0.5 + placesScore * 0.3 + themeScore * 0.2;
+  const score = peopleScore * 0.45 + placesScore * 0.25 + themeScore * 0.15 + topicScore * 0.15;
   return clamp(score);
 };
 

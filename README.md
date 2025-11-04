@@ -2,6 +2,8 @@
 
 Next.js + TypeScript application and deterministic data pipeline that power the public “The Rest Is History” explorer. The repo contains the end-to-end ingestion/enrichment tooling **and** the static UI that renders the published JSON artefacts. New contributors should skim `codex-notes.md`, `docs/SYSTEM_OVERVIEW.md`, and the PRDs in `docs/` before diving into code.
 
+LLM enrichment now emits curated `keyTopics` (registry lives in `data/rules/topics.json`) so the UI can surface reusable topic chips for discovery.
+
 ## What’s in the box
 
 ### Deterministic data pipeline
@@ -55,6 +57,12 @@ npm run schema:check       # validate artefacts against JSON Schemas
 npm test                   # Vitest suite
 ```
 
+When running the pipeline locally, load secrets first so OpenAI keys are available:
+
+```bash
+source .env.local && npm run dev:pipeline
+```
+
 ### Pipeline tips
 
 - `npm run dev:pipeline -- --plan` exercises every stage without writing to disk; handy for CI and smoke checks.
@@ -86,11 +94,12 @@ npm test                   # Vitest suite
 Primary references live in `docs/`:
 
 - `SYSTEM_OVERVIEW.md` — architecture and pipeline walkthrough.
-- `PRD-Pipeline.md` — data pipeline requirements and field inventories.
-- `PRD-UI.md` — timeline UX goals and scope.
+- `PRD-Pipeline.md` — product requirements for the data layer.
+- `PRD-UI.md` — UI experience goals and scope.
+- `topics-registry.md` — naming rules + workflow for curated `keyTopics`.
+- `timeline-data-qa.md`, `timeline-series-plan.md` — QA notes and planning docs.
 - `PRD-UI-DetailViews.md` — implementation notes for episode/series/people/places routes.
-- `timeline-data-qa.md`, `timeline-series-plan.md`, `implementation-plan.md` — planning and QA notes.
-- `environment.md` — local dev setup and secrets guidance.
+- `implementation-plan.md`, `environment.md` — planning and setup references.
 
 ## Contributing workflow
 
@@ -100,4 +109,3 @@ Primary references live in `docs/`:
 4. Monitor GitHub Actions and Vercel deployments after merging.
 
 For deeper context, read the system overview and PRDs, then explore the relevant modules under `src/` and `app/`.
-

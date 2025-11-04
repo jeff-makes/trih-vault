@@ -105,22 +105,26 @@ const buildCountsFromEpisodes = (episodes: PublicEpisode[]): {
   people: CountMap;
   places: CountMap;
   themes: CountMap;
+  topics: CountMap;
 } => {
   const people: CountMap = {};
   const places: CountMap = {};
   const themes: CountMap = {};
+  const topics: CountMap = {};
 
   episodes.forEach((episode) => {
     const uniquePeople = new Set(episode.keyPeople ?? []);
     const uniquePlaces = new Set(episode.keyPlaces ?? []);
     const uniqueThemes = new Set(episode.keyThemes ?? []);
+    const uniqueTopics = new Set((episode.keyTopics ?? []).map((topic) => topic.id));
 
     uniquePeople.forEach((name) => incrementCount(people, name));
     uniquePlaces.forEach((name) => incrementCount(places, name));
     uniqueThemes.forEach((name) => incrementCount(themes, name));
+    uniqueTopics.forEach((topicId) => incrementCount(topics, topicId));
   });
 
-  return { people, places, themes };
+  return { people, places, themes, topics };
 };
 
 export interface SeriesAggregate {
@@ -129,6 +133,7 @@ export interface SeriesAggregate {
   peopleCounts: CountMap;
   placeCounts: CountMap;
   themeCounts: CountMap;
+  topicCounts: CountMap;
 }
 
 export const getSeriesAggregate = (seriesId: string): SeriesAggregate | undefined => {
@@ -138,14 +143,15 @@ export const getSeriesAggregate = (seriesId: string): SeriesAggregate | undefine
   }
 
   const episodes = getEpisodesForSeries(seriesId);
-  const { people, places, themes } = buildCountsFromEpisodes(episodes);
+  const { people, places, themes, topics } = buildCountsFromEpisodes(episodes);
 
   return {
     series,
     episodes,
     peopleCounts: people,
     placeCounts: places,
-    themeCounts: themes
+    themeCounts: themes,
+    topicCounts: topics
   };
 };
 
@@ -156,6 +162,7 @@ export interface EpisodeContext {
   peopleCounts: CountMap;
   placeCounts: CountMap;
   themeCounts: CountMap;
+  topicCounts: CountMap;
 }
 
 export const getEpisodeContext = (episodeId: string): EpisodeContext | undefined => {
@@ -166,7 +173,7 @@ export const getEpisodeContext = (episodeId: string): EpisodeContext | undefined
 
   const series = episode.seriesId ? getSeriesById(episode.seriesId) : undefined;
   const siblings = episode.seriesId ? getEpisodesForSeries(episode.seriesId).filter((ep) => ep.episodeId !== episodeId) : [];
-  const { people, places, themes } = buildCountsFromEpisodes([episode]);
+  const { people, places, themes, topics } = buildCountsFromEpisodes([episode]);
 
   return {
     episode,
@@ -174,7 +181,8 @@ export const getEpisodeContext = (episodeId: string): EpisodeContext | undefined
     siblings,
     peopleCounts: people,
     placeCounts: places,
-    themeCounts: themes
+    themeCounts: themes,
+    topicCounts: topics
   };
 };
 

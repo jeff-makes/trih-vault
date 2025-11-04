@@ -2,6 +2,7 @@ import Ajv, { ErrorObject } from "ajv";
 import addFormats from "ajv-formats";
 
 import {
+  EpisodeTopic,
   LlmEpisodeCacheEntry,
   LlmSeriesCacheEntry,
   ProgrammaticEpisode,
@@ -10,6 +11,7 @@ import {
   PublicSeries,
   RawEpisode
 } from "@/types";
+import { TOPIC_BY_ID } from "@/config/topics";
 
 interface ValidatorInput {
   rawEpisodes: RawEpisode[];
@@ -62,6 +64,31 @@ const ensureYearOrder = (from: number | null, to: number | null, context: string
   if (from !== null && to !== null && from > to) {
     throw new Error(`Invalid year range in ${context}: yearFrom (${from}) > yearTo (${to})`);
   }
+};
+
+const validateTopicRefs = (topics: EpisodeTopic[], context: string) => {
+  topics.forEach((topic) => {
+    if (topic.isPending) {
+      if (!topic.id || !topic.label || !topic.slug) {
+        throw new Error(`Pending topic missing required fields in ${context}`);
+      }
+      return;
+    }
+    const definition = TOPIC_BY_ID[topic.id];
+    if (!definition) {
+      throw new Error(`Unknown topic id "${topic.id}" in ${context}`);
+    }
+    if (topic.label !== definition.label) {
+      throw new Error(
+        `Topic label mismatch for ${topic.id} in ${context}: expected "${definition.label}", received "${topic.label}"`
+      );
+    }
+    if (topic.slug !== definition.slug) {
+      throw new Error(
+        `Topic slug mismatch for ${topic.id} in ${context}: expected "${definition.slug}", received "${topic.slug}"`
+      );
+    }
+  });
 };
 
 export const runValidation = ({
@@ -138,6 +165,7 @@ export const runValidation = ({
         `Public episode ${episodeId} failed schema validation:\n${formatAjvErrors(validateEpisode.errors)}`
       );
     }
+    validateTopicRefs(episode.keyTopics ?? [], `public episode ${episodeId}`);
   });
 
   publicSeries.forEach((series: PublicSeries) => {
@@ -165,6 +193,7 @@ export const runValidation = ({
     if (!validateEpisodeCache(entry)) {
       throw new Error(`Episode LLM cache entry ${cacheKey} failed schema validation:\n${formatAjvErrors(validateEpisodeCache.errors)}`);
     }
+    validateTopicRefs(entry.keyTopics ?? [], `episode LLM cache ${cacheKey}`);
   });
 
   Object.entries(seriesLlmCache).forEach(([cacheKey, entry]) => {

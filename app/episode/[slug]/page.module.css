@@ -9,6 +9,12 @@
   gap: 0.5rem;
 }
 
+.factPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .audio {
   width: 100%;
   border-radius: 12px;

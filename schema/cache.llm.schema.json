@@ -3,6 +3,18 @@
   "$id": "https://trih-browser/schema/cache.llm.schema.json",
   "title": "LlmCacheEntry",
   "definitions": {
+    "topicRef": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "minLength": 1 },
+        "isPending": { "type": "boolean" },
+        "notes": { "type": ["string", "null"] }
+      },
+      "required": ["id", "label", "slug"],
+      "additionalProperties": false
+    },
     "base": {
       "type": "object",
       "properties": {
@@ -24,6 +36,13 @@
         "keyPeople": { "type": "array", "items": { "type": "string" }, "maxItems": 12, "uniqueItems": true },
         "keyPlaces": { "type": "array", "items": { "type": "string" }, "maxItems": 12, "uniqueItems": true },
         "keyThemes": { "type": "array", "items": { "type": "string" }, "minItems": 0, "maxItems": 8, "uniqueItems": true },
+        "keyTopics": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/topicRef" },
+          "minItems": 0,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
         "yearFrom": { "type": ["integer", "null"], "minimum": -9999, "maximum": 9999 },
         "yearTo": { "type": ["integer", "null"], "minimum": -9999, "maximum": 9999 },
         "yearConfidence": { "type": "string", "enum": ["high", "medium", "low", "unknown"] }
@@ -33,6 +52,7 @@
         "keyPeople",
         "keyPlaces",
         "keyThemes",
+        "keyTopics",
         "yearFrom",
         "yearTo",
         "yearConfidence"

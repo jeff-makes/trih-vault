@@ -113,7 +113,7 @@ Plan mode allows CI to verify schema + pipeline wiring without spending tokens. 
 
 ### Episode
 - Raw fields retained from RSS plus programmatic outputs (`cleanTitle`, `descriptionBlocks`, credits).
-- LLM enrichments add arrays (`keyPeople`, `keyPlaces`, `keyThemes`) and normalized year spans.
+- LLM enrichments add arrays (`keyPeople`, `keyPlaces`, `keyThemes`, `keyTopics`) and normalized year spans.
 - Fingerprint ties together the cleanup version + cleaned content to provide deterministic cache invalidation.
 
 ### Series
@@ -128,6 +128,7 @@ Plan mode allows CI to verify schema + pipeline wiring without spending tokens. 
 ### Cache Entries
 - Stored as JSON objects keyed by `${itemId}:${fingerprint}`.
 - Schema enforces required fields, array uniqueness, and kebab-case themes.
+- Episode cache entries now include `keyTopics`, referencing curated IDs from `data/rules/topics.json` (`docs/topics-registry.md`). Proposed topics are marked `isPending: true` and reviewed before acceptance.
 - Status codes (`ok`, `skipped`, `error`) allow composer to ignore invalid outputs gracefully.
 
 ---

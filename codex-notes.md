@@ -7,6 +7,7 @@
 ## Session Prep
 - Read `docs/SYSTEM_OVERVIEW.md` at session start to refresh the architecture and data flow.
 - Skim the PRDs — `docs/PRD-Pipeline.md` and `docs/PRD-UI.md` — so work stays aligned with current requirements; dive deeper into whichever matches the day’s focus.
+- When running the pipeline locally, load secrets first: `source .env.local && npm run dev:pipeline` so `OPENAI_API_KEY` and related env vars are available.
 
 ## Project Overview
 - **Repository:** trih-browser
@@ -22,8 +23,11 @@
 - ~~Refresh timeline + detail pages with slug-aware links and detail components.~~ Done — series/episode pages live with shared UI + indexes; timeline now links straight to detail views.
 - ~~Build the shared people/places indexes + similarity scoring utilities ahead of the detail pages.~~ Done — indexes power the new detail components and related suggestions.
 - Monitor the scheduled GitHub Actions publish + Vercel revalidation webhook once deployed to ensure artefacts update as expected.
+- Land the curated topic registry plumbing (`data/rules/topics.json`, prompt updates, composer changes) so `keyTopics` chips show up across the UI without drift.
+- Review LLM-proposed topic additions in `data/errors.jsonl`, curate updates to `data/rules/topics.json`, and wire topic search routes once the taxonomy settles.
 
 ## Recent Changes
+- **2025-11-04:** Added curated topic registry + prompt v2, re-ran `--force-llm episodes` to backfill `keyTopics`, surfaced topic chips on episode detail/summary cards, and logged pending topic proposals for follow-up curation.
 - **2025-11-03:** Timeline re-centered with linked episode/series cards, responsive mobile layout, and slug-aware data mappers feeding the new detail pages.
 - **2025-11-02:** Added deterministic slug registry tooling (helpers, build script, tests) and refreshed PRDs/detail-view docs with V7 slug rules + layout notes.
 - **2025-11-01:** Timeline now keeps BCE spans intact, collapses large gaps with spine-mounted markers, and scales spacing at 1.5px/year; PRDs updated accordingly.

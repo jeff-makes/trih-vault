@@ -17,6 +17,14 @@ export interface RawEpisode {
   source: SourceMetadata;
 }
 
+export interface EpisodeTopic {
+  id: string;
+  label: string;
+  slug: string;
+  isPending?: boolean;
+  notes?: string | null;
+}
+
 export interface ProgrammaticEpisodeCredits {
   producer?: string[];
   seniorProducer?: string[];
@@ -58,6 +66,7 @@ export interface ProgrammaticEpisode {
   keyPeople?: string[];
   keyPlaces?: string[];
   keyThemes?: string[];
+  keyTopics?: EpisodeTopic[];
   yearFrom?: number | null;
   yearTo?: number | null;
   yearConfidence?: YearConfidence;
@@ -106,6 +115,7 @@ export interface LlmEpisodeCacheEntry {
   keyPeople: string[];
   keyPlaces: string[];
   keyThemes: string[];
+  keyTopics: EpisodeTopic[];
   yearFrom: number | null;
   yearTo: number | null;
   yearConfidence: YearConfidence;
@@ -153,6 +163,7 @@ export interface PublicEpisode {
   keyPeople: string[];
   keyPlaces: string[];
   keyThemes: string[];
+  keyTopics: EpisodeTopic[];
   yearFrom: number | null;
   yearTo: number | null;
   yearConfidence: YearConfidence;

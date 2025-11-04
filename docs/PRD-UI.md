@@ -45,7 +45,7 @@ Make it effortless to “see the show as history”: a mobile-first vertical tim
 ## 3. Data Inputs & Determinism
 
 **`public/episodes.json`** (sorted by `publishedAt`)  
-Fields: `id`, `slug`, `cleanTitle`, `cleanDescriptionText`, `audioUrl`, `keyPeople[]`, `keyPlaces[]`, `keyThemes[]`, `seriesId`, `yearFrom`, `yearTo`, `part`.
+Fields: `id`, `slug`, `cleanTitle`, `cleanDescriptionText`, `audioUrl`, `keyPeople[]`, `keyPlaces[]`, `keyThemes[]`, `keyTopics[]`, `seriesId`, `yearFrom`, `yearTo`, `part`.
 
 **`public/series.json`** (sorted by first member date)  
 Fields: `id`, `slug`, `seriesTitle`, `narrativeSummary`, `episodeCount`, `episodeIds[]`, `yearFrom`, `yearTo`.
@@ -207,7 +207,7 @@ export const ERAS = [
 - Results interleave series and episodes with a badge (“Series” / “Episode”).
 - Optional facet chips for People and Places; toggling chips filters results client-side.
 - Client-only search index using `minisearch` (preferred) or `Fuse.js`.
-  - Indexed fields: `cleanTitle`, `cleanDescriptionText`, `seriesTitle`, `keyPeople`, `keyPlaces`, `keyThemes`.
+  - Indexed fields: `cleanTitle`, `cleanDescriptionText`, `seriesTitle`, `keyPeople`, `keyPlaces`, `keyThemes`, `keyTopics.label`.
   - Field boosts: title ×4, keyPeople ×3, keyPlaces ×2, others ×1.
 - Analytics on search submissions and result clicks.
 
@@ -217,7 +217,7 @@ export const ERAS = [
 
 **Episode**
 - Title + optional “Part N” badge (hidden when standalone).
-- People and Places chips (linking back to filtered search in post-v1 roadmap).
+- People, Places, and Topics chips (linking back to filtered search in post-v1 roadmap; topics use curated labels from the registry).
 - Summary: short teaser (~160–200 chars) above the fold; full clean description below.
 - Embedded HTML5 audio player (`<audio controls src={audioUrl}>`).
 - Breadcrumb to series (if applicable) and prev/next navigation within the same series.

@@ -81,6 +81,8 @@ export default function EpisodePage({ params }: EpisodePageProps): JSX.Element {
   const cleanedDescription = removeAdChoices(episode.cleanDescriptionText);
 
   const publishedLabel = episode.publishedAt ? episode.publishedAt.slice(0, 10) : "Unknown";
+  const topics = episode.keyTopics ?? [];
+  const topicsToShow = topics.slice(0, 4);
 
   const quickFacts = [
     { term: "Series", detail: series ? <PillLink href={`/series/${series.slug}`} variant="series">{series.seriesTitle}</PillLink> : "Standalone" },
@@ -90,6 +92,26 @@ export default function EpisodePage({ params }: EpisodePageProps): JSX.Element {
 
   if (series && episode.part) {
     quickFacts.splice(1, 0, { term: "Part", detail: `Part ${episode.part}` });
+  }
+
+  if (topicsToShow.length > 0) {
+    quickFacts.splice(1, 0, {
+      term: "Topics",
+      detail: (
+        <div className={styles.factPills}>
+          {topicsToShow.map((topic) => (
+            <PillLink
+              key={topic.id}
+              href={`/search?topic=${encodeURIComponent(topic.slug)}`}
+              variant="topics"
+              title={topic.isPending ? "Pending topic proposal" : undefined}
+            >
+              {topic.label}
+            </PillLink>
+          ))}
+        </div>
+      )
+    });
   }
 
   const breadcrumbs = [

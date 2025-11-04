@@ -208,7 +208,9 @@ export function Timeline(props: TimelineProps) {
           <ul className="undated-list">
             {undatedEpisodes.map((episode) => (
               <li key={episode.id} className="undated-item">
-                <div className="undated-item__title">{episode.title}</div>
+                <Link href={`/episode/${episode.slug}`} className="undated-item__link">
+                  <div className="undated-item__title">{episode.title}</div>
+                </Link>
               </li>
             ))}
           </ul>

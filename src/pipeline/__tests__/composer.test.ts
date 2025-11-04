@@ -143,6 +143,9 @@ const createSampleData = () => {
       keyPeople: ["Horatio Nelson"],
       keyPlaces: ["Britain"],
       keyThemes: ["napoleonic-wars", "naval-warfare", "britannia"],
+      keyTopics: [
+        { id: "napoleonic-wars", label: "Napoleonic Wars", slug: "napoleonic-wars" }
+      ],
       yearFrom: 1803,
       yearTo: 1805,
       yearConfidence: "high"
@@ -158,6 +161,7 @@ const createSampleData = () => {
       keyPeople: [],
       keyPlaces: [],
       keyThemes: [],
+      keyTopics: [],
       yearFrom: null,
       yearTo: null,
       yearConfidence: "unknown"
@@ -216,6 +220,10 @@ describe("runComposeStep", () => {
     expect(publicEpisodes[0].episodeId).toBe("ep-1");
     expect(publicEpisodes[0].keyPeople).toEqual(["Horatio Nelson"]);
     expect(publicEpisodes[1].keyPeople).toEqual([]);
+    expect(publicEpisodes[0].keyTopics).toEqual([
+      expect.objectContaining({ id: "napoleonic-wars", label: "Napoleonic Wars", slug: "napoleonic-wars" })
+    ]);
+    expect(publicEpisodes[1].keyTopics).toEqual([]);
     expect(publicEpisodes[0].slug).toBeTruthy();
     expect(publicEpisodes[1].slug).toBeTruthy();
     expect(new Set(publicEpisodes.map((episode) => episode.slug)).size).toBe(publicEpisodes.length);

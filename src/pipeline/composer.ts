@@ -109,6 +109,7 @@ export const runComposeStep = ({
         keyPeople: llm?.keyPeople ? [...llm.keyPeople] : [],
         keyPlaces: llm?.keyPlaces ? [...llm.keyPlaces] : [],
         keyThemes: llm?.keyThemes ? [...llm.keyThemes] : [],
+        keyTopics: llm?.keyTopics ? llm.keyTopics.map((topic) => ({ ...topic })) : [],
         yearFrom: episodeYearFrom,
         yearTo: episodeYearTo,
         yearConfidence: llm?.yearConfidence ?? episode.yearConfidence ?? "unknown"

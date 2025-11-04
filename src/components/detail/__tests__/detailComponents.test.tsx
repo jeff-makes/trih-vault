@@ -52,6 +52,9 @@ const sampleEpisode: PublicEpisode = {
   keyPeople: ["Ada Lovelace", "Charles Babbage"],
   keyPlaces: ["London"],
   keyThemes: ["early-computing"],
+  keyTopics: [
+    { id: "early-computing", label: "Early Computing", slug: "early-computing", isPending: false, notes: null }
+  ],
   yearFrom: 1830,
   yearTo: 1843,
   yearConfidence: "medium"

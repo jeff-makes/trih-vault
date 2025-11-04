@@ -7,7 +7,7 @@ This document bridges the brainstorming spec for Episode, People, and Places pag
 ---
 
 ## 1. Data Reality Check (2025-10-30 artefacts)
-- `public/episodes.json` (639 records) already ships `cleanTitle`, `cleanDescriptionMarkdown/Text`, `descriptionBlocks`, `audioUrl`, `keyPeople[]`, `keyPlaces[]`, `keyThemes[]`, `seriesId`, `part`, `yearFrom`, `yearTo`, `yearConfidence`, `publishedAt`, and `itunesEpisode`.
+- `public/episodes.json` (639 records) already ships `cleanTitle`, `cleanDescriptionMarkdown/Text`, `descriptionBlocks`, `audioUrl`, `keyPeople[]`, `keyPlaces[]`, `keyThemes[]`, `keyTopics[]` (coming soon), `seriesId`, `part`, `yearFrom`, `yearTo`, `yearConfidence`, `publishedAt`, and `itunesEpisode`.
 - Coverage snapshots:
   - 530 episodes include ≥1 `keyPeople`; 596 include ≥1 `keyPlaces`.
   - 450 episodes provide both `yearFrom` and `yearTo`; year confidence is currently `low`/`unknown` (no `high` values yet).
@@ -46,7 +46,7 @@ Implementation checklist:
   - Use the first meaningful sentence from `descriptionBlocks` as the highlight (it is already split by the programmatic cleanup).
   - Render `cleanDescriptionMarkdown` inside a `prose` container with a `CollapsibleText` component that auto-collapses beyond ~320 words and exposes “Show more”.
 - **Quick Facts**
-  - Definition-list style component fed by `yearFrom`/`yearTo`, `yearConfidence`, `keyPeople`, `keyPlaces`, `seriesTitle`.
+  - Definition-list style component fed by `yearFrom`/`yearTo`, `yearConfidence`, `keyPeople`, `keyPlaces`, `keyTopics`, `seriesTitle`.
   - Show `part` only when `seriesId` exists; omit for standalone episodes. Drop `itunesEpisode` from surfaced UI unless debugging requires it.
   - Each person/place uses `PillLink` to `/people/[slug]` or `/places/[slug]`. Hide sections when arrays are empty.
 - **Connected Threads**
