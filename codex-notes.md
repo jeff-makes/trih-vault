@@ -25,10 +25,11 @@
 - Structured entity rollout for people/places/topics, validating LLM outputs against the canonical registries and backfilling early/mid/late episode batches.
 
 ## Next Steps
-- Run the next enrichment batch (20-ish episodes spanning mid/late catalogue) using the command below, then merge the new proposals into the registries.
-- Continue curating pending entities: review `data/errors.jsonl` and `data/pending/*.jsonl`, approve into `data/rules/{people,places,topics}.json`, and log outcomes in `data/pending/reviews.jsonl` before re-running the pipeline.
-- Audit existing registry entries for redundant topics (merge canonical choices like `US Politics`, `The Sixties`, `Ancient Mesopotamia`) and map early episodes to the new IDs.
-- Monitor the scheduled GitHub Actions publish + Vercel revalidation webhook once deployed to ensure artefacts update as expected.
+- Re-run the composer with cached data (`OPENAI_API_KEY=dummy npm run dev:pipeline -- --max-llm-calls 0`) whenever registries change so artefacts pick up the latest canonical refs without new LLM calls.
+- Continue curating pending entities: review `data/errors.jsonl` (especially new Tudor + Disney proposals), update `data/rules/{people,places,topics}.json`, and log each decision in `data/pending/reviews.jsonl`.
+- Plan the next enrichment batch (mid/late catalogue) once the current proposals are cleared, using `--force-llm` to target the chosen episode IDs and cap spend with `--max-llm-calls`.
+- Keep auditing registries for cross-entity collisions; reconcile duplicates early so the validator guardrail doesn’t block future pipeline runs.
+- Monitor the scheduled GitHub Actions publish + Vercel revalidation webhook to ensure nightly artefact pushes stay in sync with local work.
 
 ## Canon backfill command
 ```bash
@@ -39,6 +40,7 @@ source .env.local && npm run dev:pipeline -- \
 _After the run_: review `data/errors.jsonl`, curate registries, append a review record to `data/pending/reviews.jsonl`, then recompose with `OPENAI_API_KEY=dummy npm run dev:pipeline -- --max-llm-calls 0` so artefacts pick up the canonical refs.
 
 ## Recent Changes
+- **2025-11-10:** Ingested the Nov 10 RSS snapshot, force-enriched episodes `615`, `616`, and the Bob Iger RIHC special, enforced cross-entity guardrails in `src/pipeline/validator.ts`, cleaned legacy pending topics that duplicated people/places, renamed the Rome/Greece entries to separate polity vs. topic labels, and added canonical people for Anne Boleyn, Catherine of Aragon, and Bob Iger.
 - **2025-11-04:** Introduced canonical people/places/topic registries end-to-end (prompt v3, composer/validator/schema updates), enriched a 20-episode pilot batch (`2, 4–7, 360–364, 505, 507, 510, 511, 519, 601–605`), accepted 24 new people + 13 places, added topics (`thatcher-era`, `the-sixties`, `ancient-mesopotamia`, `mughal-empire`, `us-politics`), and logged decisions in `data/pending/reviews.jsonl`; artefacts (`public/episodes.json`) now ship structured entity refs alongside legacy arrays.
 - **2025-11-03:** Timeline re-centered with linked episode/series cards, responsive mobile layout, and slug-aware data mappers feeding the new detail pages.
 - **2025-11-02:** Added deterministic slug registry tooling (helpers, build script, tests) and refreshed PRDs/detail-view docs with V7 slug rules + layout notes.
