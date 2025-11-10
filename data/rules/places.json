@@ -313,5 +313,59 @@
     "preferredName": "Athens",
     "aliases": ["Athína"],
     "type": "city"
+  },
+  {
+    "id": "cuba",
+    "preferredName": "Cuba",
+    "aliases": ["Republic of Cuba"],
+    "type": "nation"
+  },
+  {
+    "id": "czechoslovakia",
+    "preferredName": "Czechoslovakia",
+    "aliases": ["Czecho-Slovakia"],
+    "type": "extinct-polity"
+  },
+  {
+    "id": "munich",
+    "preferredName": "Munich",
+    "aliases": ["München"],
+    "type": "city"
+  },
+  {
+    "id": "nuremberg",
+    "preferredName": "Nuremberg",
+    "aliases": ["Nürnberg"],
+    "type": "city"
+  },
+  {
+    "id": "sudan",
+    "preferredName": "Sudan",
+    "aliases": ["Republic of the Sudan", "Anglo-Egyptian Sudan"],
+    "type": "nation"
+  },
+  {
+    "id": "vienna",
+    "preferredName": "Vienna",
+    "aliases": ["Wien"],
+    "type": "city"
+  },
+  {
+    "id": "congo-free-state",
+    "preferredName": "Congo Free State",
+    "aliases": ["État Indépendant du Congo", "Etat Independant du Congo", "Independent State of the Congo"],
+    "type": "extinct-polity"
+  },
+  {
+    "id": "buenos-aires",
+    "preferredName": "Buenos Aires",
+    "aliases": ["Ciudad de Buenos Aires", "Buenos Aires City"],
+    "type": "city"
+  },
+  {
+    "id": "auschwitz",
+    "preferredName": "Auschwitz",
+    "aliases": ["Auschwitz Concentration Camp", "KL Auschwitz", "Oswiecim"],
+    "type": "site"
   }
 ]

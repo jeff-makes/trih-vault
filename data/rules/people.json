@@ -2,7 +2,7 @@
   {
     "id": "adolf-hitler",
     "preferredName": "Adolf Hitler",
-    "aliases": ["Hitler", "Der Führer"],
+    "aliases": ["Hitler", "Der Führer", "Der Fuhrer"],
     "type": "person:historical"
   },
   {
@@ -80,7 +80,7 @@
   {
     "id": "eva-peron",
     "preferredName": "Eva Perón",
-    "aliases": ["Evita Perón", "María Eva Duarte de Perón"],
+    "aliases": ["Evita Perón", "María Eva Duarte de Perón", "Evita Peron", "Maria Eva Duarte de Peron", "Eva Peron"],
     "type": "person:historical"
   },
   {
@@ -332,7 +332,7 @@
   {
     "id": "red-cloud",
     "preferredName": "Red Cloud",
-    "aliases": ["Maȟpíya Lúta"],
+    "aliases": ["Maȟpíya Lúta", "Mahpiya Luta"],
     "type": "person:historical"
   },
   {
@@ -344,7 +344,7 @@
   {
     "id": "crazy-horse",
     "preferredName": "Crazy Horse",
-    "aliases": ["Tasunke Witko", "Tȟašúŋke Witkó"],
+    "aliases": ["Tasunke Witko", "Tȟašúŋke Witkó", "Tashunke Witko", "Thasuke Witko"],
     "type": "person:historical"
   },
   {
@@ -658,5 +658,71 @@
     "preferredName": "Circe",
     "aliases": [],
     "type": "person:mythological"
+  },
+  {
+    "id": "leopold-ii-of-belgium",
+    "preferredName": "Leopold II of Belgium",
+    "aliases": ["King Leopold II", "Leopold II"],
+    "type": "person:historical"
+  },
+  {
+    "id": "henry-morton-stanley",
+    "preferredName": "Henry Morton Stanley",
+    "aliases": ["Sir Henry Morton Stanley", "Henry Stanley"],
+    "type": "person:historical"
+  },
+  {
+    "id": "bart-van-loo",
+    "preferredName": "Bart van Loo",
+    "aliases": ["Bart Van Loo"],
+    "type": "person:historical"
+  },
+  {
+    "id": "jan-van-eyck",
+    "preferredName": "Jan van Eyck",
+    "aliases": ["Jan Van Eyck", "Johannes de Eyck"],
+    "type": "person:historical"
+  },
+  {
+    "id": "malinche",
+    "preferredName": "Malinche",
+    "aliases": ["La Malinche", "Malintzin", "Doña Marina", "Dona Marina"],
+    "type": "person:historical"
+  },
+  {
+    "id": "panfilo-de-narvaez",
+    "preferredName": "Pánfilo de Narváez",
+    "aliases": ["Panfilo de Narvaez", "Panfilo Narvaez"],
+    "type": "person:historical"
+  },
+  {
+    "id": "juan-peron",
+    "preferredName": "Juan Perón",
+    "aliases": ["Juan Peron"],
+    "type": "person:historical"
+  },
+  {
+    "id": "rudolf-vrba",
+    "preferredName": "Rudolf Vrba",
+    "aliases": ["Walter Rosenberg"],
+    "type": "person:historical"
+  },
+  {
+    "id": "alfred-wetzler",
+    "preferredName": "Alfréd Wetzler",
+    "aliases": ["Alfred Wetzler"],
+    "type": "person:historical"
+  },
+  {
+    "id": "kurt-schuschnigg",
+    "preferredName": "Kurt Schuschnigg",
+    "aliases": ["Chancellor Kurt Schuschnigg"],
+    "type": "person:historical"
+  },
+  {
+    "id": "walt-disney",
+    "preferredName": "Walt Disney",
+    "aliases": ["Walter Elias Disney"],
+    "type": "person:historical"
   }
 ]

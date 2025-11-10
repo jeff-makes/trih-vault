@@ -323,5 +323,14 @@
     "aliases": ["American Politics", "United States Politics"],
     "type": "politics",
     "description": "Recurring themes, movements, and electoral shifts in the political history of the United States."
+  },
+  {
+    "id": "british-royal-family",
+    "preferredName": "British Royal Family",
+    "label": "British Royal Family",
+    "slug": "british-royal-family",
+    "aliases": ["Royal Family", "House of Windsor", "UK Royal Family"],
+    "type": "organization",
+    "description": "Modern royal household of the United Kingdom and Commonwealth realms, centred on the House of Windsor."
   }
 ]

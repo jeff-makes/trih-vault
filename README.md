@@ -1,6 +1,6 @@
 # The Rest Is History Explorer
 
-Next.js + TypeScript application and deterministic data pipeline that power the public “The Rest Is History” explorer. The repo contains the end-to-end ingestion/enrichment tooling **and** the static UI that renders the published JSON artefacts. New contributors should skim `codex-notes.md`, `docs/SYSTEM_OVERVIEW.md`, and the PRDs in `docs/` before diving into code.
+Next.js + TypeScript application and deterministic data pipeline that power the public “The Rest Is History” explorer. The repo contains the end-to-end ingestion/enrichment tooling **and** the static UI that renders the published JSON artefacts. New contributors should skim `codex-notes.md`, `docs/SYSTEM_OVERVIEW.md`, and the PRDs in `docs/` before diving into code, and every fresh AI coding session must begin by reading `codex-notes.md` to stay aligned with the latest collaboration guidance.
 
 LLM enrichment now emits curated `keyTopics` (registry lives in `data/rules/topics.json`) so the UI can surface reusable topic chips for discovery.
 

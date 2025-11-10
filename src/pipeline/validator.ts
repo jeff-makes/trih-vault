@@ -70,11 +70,39 @@ const ensureYearOrder = (from: number | null, to: number | null, context: string
   }
 };
 
+const detectEntityCollision = (value?: string): string | null => {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const person = findPerson(trimmed);
+  if (person) {
+    return `person "${person.preferredName}"`;
+  }
+  const place = findPlace(trimmed);
+  if (place) {
+    return `place "${place.preferredName}"`;
+  }
+  return null;
+};
+
 const validateTopicRefs = (topics: EpisodeTopic[], context: string) => {
   topics.forEach((topic) => {
     if (topic.isPending) {
       if (!topic.id || !topic.label || !topic.slug) {
         throw new Error(`Pending topic missing required fields in ${context}`);
+      }
+      const collisionsToCheck = [topic.label, topic.slug, topic.id];
+      for (const candidate of collisionsToCheck) {
+        const collision = detectEntityCollision(candidate);
+        if (collision) {
+          throw new Error(
+            `Pending topic "${topic.label}" in ${context} conflicts with existing ${collision}`
+          );
+        }
       }
       return;
     }
