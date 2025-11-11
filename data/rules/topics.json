@@ -316,6 +316,15 @@
     "description": "Imperial expansion, governance, and resistance across colonized regions."
   },
   {
+    "id": "latin-american-politics",
+    "preferredName": "Latin American Politics",
+    "label": "Latin American Politics",
+    "slug": "latin-american-politics",
+    "aliases": ["Latin America Politics"],
+    "type": "politics",
+    "description": "Political movements, revolutions, and governance across Latin America in the modern era."
+  },
+  {
     "id": "mughal-empire",
     "preferredName": "Mughal Empire",
     "label": "Mughal Empire",

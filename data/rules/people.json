@@ -564,6 +564,12 @@
     "type": "person:historical"
   },
   {
+    "id": "jonathan-swift",
+    "preferredName": "Jonathan Swift",
+    "aliases": ["Dean Swift"],
+    "type": "person:historical"
+  },
+  {
     "id": "jimi-hendrix",
     "preferredName": "Jimi Hendrix",
     "aliases": ["James Marshall Hendrix"],
