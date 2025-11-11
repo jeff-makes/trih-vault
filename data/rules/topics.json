@@ -213,7 +213,8 @@
     "label": "Christianity",
     "slug": "christianity",
     "aliases": [
-      "Christian History"
+      "Christian History",
+      "Saint Catherine of Siena"
     ],
     "type": "religion",
     "description": "The development of Christian belief, practice, and institutions."
@@ -606,7 +607,8 @@
       "Classical Myth",
       "Classical Mythology",
       "Global Mythology",
-      "Greco-Roman Myth"
+      "Greco-Roman Myth",
+      "Harry Potter"
     ],
     "type": "mythology",
     "description": "Cross-cultural mythic traditions including Greek, Roman, Norse, Egyptian, and others."
@@ -680,6 +682,18 @@
     ],
     "type": "religion",
     "description": "Pre-Christian and modern neopagan beliefs, rituals, and revivals."
+  },
+  {
+    "id": "peasants-revolt",
+    "preferredName": "Peasants' Revolt",
+    "label": "Peasants' Revolt",
+    "slug": "peasants-revolt",
+    "aliases": [
+      "Peasants Revolt",
+      "Wat Tyler's Rebellion"
+    ],
+    "type": "revolt",
+    "description": "The 1381 uprising in England against poll taxes and feudal burdens."
   },
   {
     "id": "persian-empire",
@@ -832,6 +846,17 @@
     ],
     "type": "era",
     "description": "British political, economic, and cultural landscape during Margaret Thatcher's premiership (1979\u20131990)."
+  },
+  {
+    "id": "titanic",
+    "preferredName": "Titanic",
+    "label": "Titanic",
+    "slug": "titanic",
+    "aliases": [
+      "RMS Titanic"
+    ],
+    "type": "event",
+    "description": "The 1912 voyage, sinking, and aftermath of the RMS Titanic."
   },
   {
     "id": "the-beatles",

@@ -146,6 +146,15 @@
     "type": "person:historical"
   },
   {
+    "id": "catherine-of-siena",
+    "preferredName": "Saint Catherine of Siena",
+    "aliases": [
+      "Caterina Benincasa",
+      "St. Catherine of Siena"
+    ],
+    "type": "person:saint"
+  },
+  {
     "id": "charlemagne",
     "preferredName": "Charlemagne",
     "aliases": [
@@ -385,6 +394,14 @@
       "James Harold Wilson"
     ],
     "type": "person:historical"
+  },
+  {
+    "id": "harry-potter",
+    "preferredName": "Harry Potter",
+    "aliases": [
+      "The Boy Who Lived"
+    ],
+    "type": "person:fictional"
   },
   {
     "id": "helen-of-troy",
@@ -801,6 +818,14 @@
     "type": "person:legendary"
   },
   {
+    "id": "oscar-wilde",
+    "preferredName": "Oscar Wilde",
+    "aliases": [
+      "Oscar Fingal O'Flahertie Wills Wilde"
+    ],
+    "type": "person:historical"
+  },
+  {
     "id": "oswald-mosley",
     "preferredName": "Oswald Mosley",
     "aliases": [],
@@ -916,6 +941,14 @@
       "Walter Rosenberg"
     ],
     "type": "person:historical"
+  },
+  {
+    "id": "saint-george",
+    "preferredName": "Saint George",
+    "aliases": [
+      "St. George"
+    ],
+    "type": "person:legendary"
   },
   {
     "id": "saint-patrick",
