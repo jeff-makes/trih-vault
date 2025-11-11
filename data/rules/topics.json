@@ -189,6 +189,15 @@
     "description": "1066 Norman invasion of England and subsequent rule."
   },
   {
+    "id": "natural-history",
+    "preferredName": "Natural History",
+    "label": "Natural History",
+    "slug": "natural-history",
+    "aliases": ["Paleontology", "Dinosaur Paleontology"],
+    "type": "theme",
+    "description": "Scientific study of Earth's past life, fossils, and geological change."
+  },
+  {
     "id": "renaissance",
     "preferredName": "The Renaissance",
     "label": "The Renaissance",
