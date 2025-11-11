@@ -88,6 +88,7 @@ export async function GET() {
   );
 
   const topicMappings = extractTopicMappings(reviewsRaw);
+  const rejections = extractRejections(reviewsRaw);
   const personResolver = buildResolver(JSON.parse(peopleRaw));
   const placeResolver = buildResolver(JSON.parse(placesRaw));
   const topicResolver = buildResolver(JSON.parse(topicsRaw));
@@ -152,13 +153,25 @@ export async function GET() {
           entry.details?.personProposal?.map((p: any) => ({
             label: p.label,
           })) ?? [];
-        addItems("person", items, (item) => isKnownEntity(item, personResolver));
+        addItems(
+          "person",
+          items,
+          (item) =>
+            rejections.person.has(item.label.toLowerCase()) ||
+            isKnownEntity(item, personResolver),
+        );
       } else if (message === PLACE_MSG) {
         const items =
           entry.details?.placeProposal?.map((p: any) => ({
             label: p.label,
           })) ?? [];
-        addItems("place", items, (item) => isKnownEntity(item, placeResolver));
+        addItems(
+          "place",
+          items,
+          (item) =>
+            rejections.place.has(item.label.toLowerCase()) ||
+            isKnownEntity(item, placeResolver),
+        );
       } else if (message === TOPIC_MSG) {
         const items =
           entry.details?.topicProposal?.map((p: any) => ({
@@ -167,7 +180,7 @@ export async function GET() {
             notes: p.notes ?? null,
           })) ?? [];
         addItems("topic", items, (item) =>
-          isKnownTopic(item, topicResolver, topicMappings),
+          isKnownTopic(item, topicResolver, topicMappings, rejections.topic),
         );
       }
 
@@ -194,6 +207,12 @@ export async function GET() {
 
 type Resolver = {
   tokens: Set<string>;
+};
+
+type RejectionSets = {
+  person: Set<string>;
+  place: Set<string>;
+  topic: Set<string>;
 };
 
 const buildResolver = (registry: any[]): Resolver => {
@@ -226,10 +245,14 @@ const isKnownTopic = (
   proposal: ProposalItem,
   resolver: Resolver,
   topicMappings: Map<string, string>,
+  rejections: RejectionSets["topic"],
 ) => {
   const label = proposal.label ?? "";
   const slug = slugify(label);
   const proposalId = proposal.id ?? slug;
+  if (rejections.has(label.toLowerCase()) || rejections.has(slug)) {
+    return true;
+  }
   if (topicMappings.has(proposalId)) {
     return true;
   }
@@ -257,4 +280,34 @@ const extractTopicMappings = (reviewsRaw: string) => {
       });
     });
   return mappings;
+};
+
+const extractRejections = (reviewsRaw: string): RejectionSets => {
+  const rejectSet = () => new Set<string>();
+  const result: RejectionSets = {
+    person: rejectSet(),
+    place: rejectSet(),
+    topic: rejectSet(),
+  };
+  if (!reviewsRaw) return result;
+  reviewsRaw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map(safeJsonParse)
+    .filter(Boolean)
+    .forEach((entry: any) => {
+      const addAll = (values: string[] | undefined, bucket: Set<string>) => {
+        if (!Array.isArray(values)) return;
+        values.forEach((value) => {
+          if (!value) return;
+          bucket.add(value.toLowerCase());
+          bucket.add(slugify(value));
+        });
+      };
+      addAll(entry.peopleRejected, result.person);
+      addAll(entry.placesRejected, result.place);
+      addAll(entry.topicsRejected, result.topic);
+    });
+  return result;
 };

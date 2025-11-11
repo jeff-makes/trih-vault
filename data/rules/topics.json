@@ -36,6 +36,17 @@
     "description": "Series of conflicts between the United States and Indigenous peoples of North America."
   },
   {
+    "id": "american-revolution",
+    "preferredName": "American Revolution",
+    "label": "American Revolution",
+    "slug": "american-revolution",
+    "aliases": [
+      "American War of Independence"
+    ],
+    "type": "conflict",
+    "description": "The 1765\u20131783 revolutionary period that created the United States."
+  },
+  {
     "id": "ancient-egypt",
     "preferredName": "Ancient Egypt",
     "label": "Ancient Egypt",
@@ -80,6 +91,15 @@
     "description": "People, politics, and wars tied to Rome from monarchy through empire."
   },
   {
+    "id": "anglo-saxon",
+    "preferredName": "Anglo-Saxon England",
+    "label": "Anglo-Saxon England",
+    "slug": "anglo-saxon",
+    "aliases": [],
+    "type": "era",
+    "description": "Britain between the fall of Rome and the Norman Conquest."
+  },
+  {
     "id": "anglo-saxon-england",
     "preferredName": "Anglo-Saxon England",
     "label": "Anglo-Saxon England",
@@ -89,6 +109,15 @@
     ],
     "type": "era",
     "description": "England from the 5th century settlement of Anglo-Saxons to the Norman Conquest."
+  },
+  {
+    "id": "australian-politics",
+    "preferredName": "Australian Politics",
+    "label": "Australian Politics",
+    "slug": "australian-politics",
+    "aliases": [],
+    "type": "politics",
+    "description": "Prime ministers, parties, and constitutional debates in Australia."
   },
   {
     "id": "aztec-empire",
@@ -102,6 +131,26 @@
     "description": "Mesoamerican empire centered on Tenochtitlan prior to Spanish conquest."
   },
   {
+    "id": "babylon",
+    "preferredName": "Babylon",
+    "label": "Babylon",
+    "slug": "babylon",
+    "aliases": [
+      "Babylonian Civilization"
+    ],
+    "type": "civilization",
+    "description": "Ancient Mesopotamian city-state and empire centered on the city of Babylon."
+  },
+  {
+    "id": "biblical-history",
+    "preferredName": "Biblical History",
+    "label": "Biblical History",
+    "slug": "biblical-history",
+    "aliases": [],
+    "type": "religion",
+    "description": "Events and narratives from the Hebrew Bible and early Christian era."
+  },
+  {
     "id": "british-empire",
     "preferredName": "British Empire",
     "label": "British Empire",
@@ -111,6 +160,15 @@
     ],
     "type": "empire",
     "description": "Expansion, governance, and decline of the British Empire."
+  },
+  {
+    "id": "british-prime-ministers",
+    "preferredName": "British Prime Ministers",
+    "label": "British Prime Ministers",
+    "slug": "british-prime-ministers",
+    "aliases": [],
+    "type": "politics",
+    "description": "Recurring arcs covering UK prime ministers and their legacies."
   },
   {
     "id": "british-royal-family",
@@ -124,6 +182,30 @@
     ],
     "type": "organization",
     "description": "Modern royal household of the United Kingdom and Commonwealth realms, centred on the House of Windsor."
+  },
+  {
+    "id": "china-history",
+    "preferredName": "History of China",
+    "label": "History of China",
+    "slug": "history-of-china",
+    "aliases": [
+      "Chinese History",
+      "Imperial China",
+      "China History"
+    ],
+    "type": "civilization",
+    "description": "Dynasties, politics, and culture across Chinese history."
+  },
+  {
+    "id": "christianity",
+    "preferredName": "Christianity",
+    "label": "Christianity",
+    "slug": "christianity",
+    "aliases": [
+      "Christian History"
+    ],
+    "type": "religion",
+    "description": "The development of Christian belief, practice, and institutions."
   },
   {
     "id": "christmas",
@@ -157,6 +239,15 @@
     "description": "Imperial expansion, governance, and resistance across colonized regions."
   },
   {
+    "id": "comedy-history",
+    "preferredName": "Comedy History",
+    "label": "Comedy History",
+    "slug": "comedy-history",
+    "aliases": [],
+    "type": "culture",
+    "description": "The evolution of comedy, satire, and humor across eras."
+  },
+  {
     "id": "conspiracy-theories",
     "preferredName": "Conspiracy Theories",
     "label": "Conspiracy Theories",
@@ -166,6 +257,15 @@
     ],
     "type": "culture",
     "description": "Persistent alternative explanations that shape political and cultural movements."
+  },
+  {
+    "id": "crusades",
+    "preferredName": "The Crusades",
+    "label": "The Crusades",
+    "slug": "crusades",
+    "aliases": [],
+    "type": "conflict",
+    "description": "Medieval religious wars between Latin Christendom and its rivals."
   },
   {
     "id": "disney",
@@ -179,6 +279,15 @@
     "description": "Entertainment company and brand spanning film, television, and theme parks."
   },
   {
+    "id": "early-modern-britain",
+    "preferredName": "Early Modern Britain",
+    "label": "Early Modern Britain",
+    "slug": "early-modern-britain",
+    "aliases": [],
+    "type": "era",
+    "description": "Britain roughly between the Tudors and the Restoration."
+  },
+  {
     "id": "english-civil-war",
     "preferredName": "English Civil War",
     "label": "English Civil War",
@@ -190,6 +299,24 @@
     "description": "17th-century conflicts between Parliamentarians and Royalists in England."
   },
   {
+    "id": "english-restoration",
+    "preferredName": "English Restoration",
+    "label": "English Restoration",
+    "slug": "english-restoration",
+    "aliases": [],
+    "type": "era",
+    "description": "The return of the monarchy under Charles II and its cultural aftermath."
+  },
+  {
+    "id": "fashion-history",
+    "preferredName": "Fashion History",
+    "label": "Fashion History",
+    "slug": "fashion-history",
+    "aliases": [],
+    "type": "culture",
+    "description": "Evolution of clothing, textiles, and style trends across eras."
+  },
+  {
     "id": "french-revolution",
     "preferredName": "French Revolution",
     "label": "French Revolution",
@@ -199,6 +326,15 @@
     ],
     "type": "revolution",
     "description": "Revolutionary upheaval in France (1789\u20131799)."
+  },
+  {
+    "id": "gladiator-history",
+    "preferredName": "Gladiator History",
+    "label": "Gladiator History",
+    "slug": "gladiator-history",
+    "aliases": [],
+    "type": "culture",
+    "description": "Spectacle combat traditions in ancient Rome and beyond."
   },
   {
     "id": "greek-mythology",
@@ -232,6 +368,26 @@
     "description": "Meta-discussions on learning from history, philosophy of history, and historiography."
   },
   {
+    "id": "indian-history",
+    "preferredName": "Indian History",
+    "label": "Indian History",
+    "slug": "indian-history",
+    "aliases": [
+      "History of India"
+    ],
+    "type": "civilization",
+    "description": "Political, cultural, and architectural history across the Indian subcontinent."
+  },
+  {
+    "id": "industrial-revolution",
+    "preferredName": "Industrial Revolution",
+    "label": "Industrial Revolution",
+    "slug": "industrial-revolution",
+    "aliases": [],
+    "type": "theme",
+    "description": "Proposed topic; episode centers on the Industrial Revolution and Britain's role in industrialisation."
+  },
+  {
     "id": "latin-american-politics",
     "preferredName": "Latin American Politics",
     "label": "Latin American Politics",
@@ -263,6 +419,15 @@
     ],
     "type": "theme",
     "description": "Evolution of communication mediums from print to broadcast to digital public spheres."
+  },
+  {
+    "id": "medieval-britain",
+    "preferredName": "Medieval Britain",
+    "label": "Medieval Britain",
+    "slug": "medieval-britain",
+    "aliases": [],
+    "type": "era",
+    "description": "Britain during the Middle Ages, including kingdoms like Northumbria."
   },
   {
     "id": "medieval-england",
@@ -307,6 +472,35 @@
     ],
     "type": "politics",
     "description": "Intelligence operations, spycraft, and geopolitical intrigue in the late 20th/21st centuries."
+  },
+  {
+    "id": "modern-french-politics",
+    "preferredName": "Modern French Politics",
+    "label": "Modern French Politics",
+    "slug": "modern-french-politics",
+    "aliases": [],
+    "type": "politics",
+    "description": "French presidential and parliamentary politics from the late 20th century onward."
+  },
+  {
+    "id": "modern-india",
+    "preferredName": "Modern India",
+    "label": "Modern India",
+    "slug": "modern-india",
+    "aliases": [],
+    "type": "era",
+    "description": "India from the late colonial period through independence and beyond."
+  },
+  {
+    "id": "mongol-empire",
+    "preferredName": "Mongol Empire",
+    "label": "Mongol Empire",
+    "slug": "mongol-empire",
+    "aliases": [
+      "Mongol Conquests"
+    ],
+    "type": "civilization",
+    "description": "The Mongol expansion under Genghis Khan and his successors."
   },
   {
     "id": "mughal-empire",
@@ -393,6 +587,62 @@
     "description": "Artistic and cultural flowering in the Low Countries and Northern Europe during the 15th\u201316th centuries."
   },
   {
+    "id": "paganism",
+    "preferredName": "Paganism",
+    "label": "Paganism",
+    "slug": "paganism",
+    "aliases": [
+      "Modern Paganism"
+    ],
+    "type": "religion",
+    "description": "Pre-Christian and modern neopagan beliefs, rituals, and revivals."
+  },
+  {
+    "id": "persian-empire",
+    "preferredName": "Persian Empire",
+    "label": "Persian Empire",
+    "slug": "persian-empire",
+    "aliases": [
+      "Achaemenid Empire",
+      "Sassanid Empire"
+    ],
+    "type": "civilization",
+    "description": "Imperial dynasties of Persia across antiquity and late antiquity."
+  },
+  {
+    "id": "plague",
+    "preferredName": "Plague",
+    "label": "Plague",
+    "slug": "plague",
+    "aliases": [
+      "Plagues"
+    ],
+    "type": "event",
+    "description": "Pandemics such as the Black Death, Great Plague, and other outbreaks."
+  },
+  {
+    "id": "post-soviet-russia",
+    "preferredName": "Post-Soviet Russia",
+    "label": "Post-Soviet Russia",
+    "slug": "post-soviet-russia",
+    "aliases": [
+      "Post-Soviet Era"
+    ],
+    "type": "politics",
+    "description": "Russia after 1991, from Yeltsin through Putin."
+  },
+  {
+    "id": "reformation",
+    "preferredName": "The Reformation",
+    "label": "The Reformation",
+    "slug": "reformation",
+    "aliases": [
+      "Protestant Reformation"
+    ],
+    "type": "religion",
+    "description": "16th-century religious upheavals led by Luther, Calvin, and their opponents."
+  },
+  {
     "id": "renaissance",
     "preferredName": "The Renaissance",
     "label": "The Renaissance",
@@ -402,6 +652,79 @@
     ],
     "type": "era",
     "description": "Cultural rebirth in Europe from the 14th to 17th centuries."
+  },
+  {
+    "id": "roman-britain",
+    "preferredName": "Roman Britain",
+    "label": "Roman Britain",
+    "slug": "roman-britain",
+    "aliases": [],
+    "type": "era",
+    "description": "Britannia under Roman rule and its aftermath."
+  },
+  {
+    "id": "russian-revolution",
+    "preferredName": "Russian Revolution",
+    "label": "Russian Revolution",
+    "slug": "russian-revolution",
+    "aliases": [
+      "Russian Revolutions"
+    ],
+    "type": "event",
+    "description": "The 1905\u20131921 revolutionary waves that reshaped Russia."
+  },
+  {
+    "id": "slavery-in-america",
+    "preferredName": "Slavery in America",
+    "label": "Slavery in America",
+    "slug": "slavery-in-america",
+    "aliases": [
+      "American Slavery"
+    ],
+    "type": "culture",
+    "description": "Enslavement, resistance, and abolition across North America and the Caribbean."
+  },
+  {
+    "id": "smuggling",
+    "preferredName": "Smuggling",
+    "label": "Smuggling",
+    "slug": "smuggling",
+    "aliases": [
+      "Contraband"
+    ],
+    "type": "economics",
+    "description": "Informal trade networks and contraband economies across history."
+  },
+  {
+    "id": "soviet-history",
+    "preferredName": "History of the USSR",
+    "label": "History of the USSR",
+    "slug": "history-of-the-ussr",
+    "aliases": [
+      "Soviet Era"
+    ],
+    "type": "politics",
+    "description": "History and politics of the USSR era."
+  },
+  {
+    "id": "spanish-armada",
+    "preferredName": "Spanish Armada",
+    "label": "Spanish Armada",
+    "slug": "spanish-armada",
+    "aliases": [],
+    "type": "event",
+    "description": "The 1588 naval campaign between Spain and England."
+  },
+  {
+    "id": "sports",
+    "preferredName": "Sports",
+    "label": "Sports",
+    "slug": "sports",
+    "aliases": [
+      "Sport History"
+    ],
+    "type": "culture",
+    "description": "Global sports history and iconic matches across eras."
   },
   {
     "id": "thatcher-era",
@@ -422,6 +745,17 @@
     "aliases": [],
     "type": "organization:band",
     "description": "British rock band active from 1960 to 1970."
+  },
+  {
+    "id": "the-nineties",
+    "preferredName": "The Nineties",
+    "label": "The Nineties",
+    "slug": "the-nineties",
+    "aliases": [
+      "1990s"
+    ],
+    "type": "era",
+    "description": "Cultural, political, and technological shifts of the 1990s."
   },
   {
     "id": "the-rolling-stones",
@@ -453,6 +787,17 @@
     ],
     "type": "era",
     "description": "Cultural, political, and social movements of the 1960s decade."
+  },
+  {
+    "id": "the-vikings",
+    "preferredName": "The Vikings",
+    "label": "The Vikings",
+    "slug": "the-vikings",
+    "aliases": [
+      "Viking Age"
+    ],
+    "type": "culture",
+    "description": "Scandinavian exploration, warfare, and culture in the Viking Age."
   },
   {
     "id": "the-west",
@@ -509,6 +854,17 @@
     "description": "Regional identity discussions across the UK; alias of Modern Britain"
   },
   {
+    "id": "ukraine-russia",
+    "preferredName": "Ukraine and Russia",
+    "label": "Ukraine and Russia",
+    "slug": "ukraine-russia",
+    "aliases": [
+      "Rus-Ukraine Relations"
+    ],
+    "type": "politics",
+    "description": "Shared and contested history between Ukraine and Russia."
+  },
+  {
     "id": "us-politics",
     "preferredName": "US Politics",
     "label": "US Politics",
@@ -528,6 +884,35 @@
     "aliases": [],
     "type": "era",
     "description": "England during the reign of Queen Victoria (1837\u20131901)."
+  },
+  {
+    "id": "wars-of-the-roses",
+    "preferredName": "Wars of the Roses",
+    "label": "Wars of the Roses",
+    "slug": "wars-of-the-roses",
+    "aliases": [],
+    "type": "conflict",
+    "description": "Dynastic civil wars between the houses of Lancaster and York."
+  },
+  {
+    "id": "wild-west-myth",
+    "preferredName": "Wild West Myth",
+    "label": "Wild West Myth",
+    "slug": "wild-west-myth",
+    "aliases": [],
+    "type": "culture",
+    "description": "Legends and realities of the American West."
+  },
+  {
+    "id": "witchcraft",
+    "preferredName": "Witchcraft",
+    "label": "Witchcraft",
+    "slug": "witchcraft",
+    "aliases": [
+      "Witch Trials"
+    ],
+    "type": "culture",
+    "description": "Beliefs, persecutions, and folklore surrounding witches."
   },
   {
     "id": "world-war-i",

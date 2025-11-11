@@ -216,6 +216,14 @@
     "type": "person:historical"
   },
   {
+    "id": "dan-jackson",
+    "preferredName": "Dan Jackson",
+    "aliases": [
+      "Daniel Jackson"
+    ],
+    "type": "person:guest"
+  },
+  {
     "id": "dionysus",
     "preferredName": "Dionysus",
     "aliases": [
@@ -890,6 +898,14 @@
       "Walter Rosenberg"
     ],
     "type": "person:historical"
+  },
+  {
+    "id": "saint-patrick",
+    "preferredName": "Saint Patrick",
+    "aliases": [
+      "Patrick of Ireland"
+    ],
+    "type": "person:religious"
   },
   {
     "id": "shah-jahan",
