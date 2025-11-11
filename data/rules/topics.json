@@ -91,17 +91,6 @@
     "description": "England from the 5th century settlement of Anglo-Saxons to the Norman Conquest."
   },
   {
-    "id": "aztec-conquest",
-    "preferredName": "Aztec Conquest",
-    "label": "Aztec Conquest",
-    "slug": "aztec-conquest",
-    "aliases": [
-      "Conquest of Mexico"
-    ],
-    "type": "event",
-    "description": "Spanish-led campaign that toppled the Aztec Empire (1519\u20131521)."
-  },
-  {
     "id": "aztec-empire",
     "preferredName": "Aztec Empire",
     "label": "Aztec Empire",
@@ -172,7 +161,9 @@
     "preferredName": "Conspiracy Theories",
     "label": "Conspiracy Theories",
     "slug": "conspiracy-theories",
-    "aliases": [],
+    "aliases": [
+      "Alternative Narratives"
+    ],
     "type": "culture",
     "description": "Persistent alternative explanations that shape political and cultural movements."
   },
@@ -208,17 +199,6 @@
     ],
     "type": "revolution",
     "description": "Revolutionary upheaval in France (1789\u20131799)."
-  },
-  {
-    "id": "greco-roman-myth",
-    "preferredName": "Greco-Roman Myth",
-    "label": "Greco-Roman Myth",
-    "slug": "greco-roman-myth",
-    "aliases": [
-      "Classical Mythology"
-    ],
-    "type": "mythology",
-    "description": "Foundational myths shared across Greek and Roman traditions."
   },
   {
     "id": "greek-mythology",
@@ -307,6 +287,17 @@
     "description": "European history from roughly the 5th to the 15th century."
   },
   {
+    "id": "modern-britain",
+    "preferredName": "Modern Britain",
+    "label": "Modern Britain",
+    "slug": "modern-britain",
+    "aliases": [
+      "Contemporary UK"
+    ],
+    "type": "culture",
+    "description": "Postwar British society, politics, and regional shifts."
+  },
+  {
     "id": "modern-espionage",
     "preferredName": "Modern Espionage",
     "label": "Modern Espionage",
@@ -327,6 +318,20 @@
     ],
     "type": "empire",
     "description": "Early modern Islamic empire that ruled much of South Asia between 1526 and 1857."
+  },
+  {
+    "id": "mythology",
+    "preferredName": "Mythology",
+    "label": "Mythology",
+    "slug": "mythology",
+    "aliases": [
+      "Classical Myth",
+      "Classical Mythology",
+      "Global Mythology",
+      "Greco-Roman Myth"
+    ],
+    "type": "mythology",
+    "description": "Cross-cultural mythic traditions including Greek, Roman, Norse, Egyptian, and others."
   },
   {
     "id": "napoleonic-wars",
@@ -359,7 +364,8 @@
     "aliases": [
       "Nazis",
       "Third Reich",
-      "National Socialism"
+      "National Socialism",
+      "Nazi Party"
     ],
     "type": "regime",
     "description": "National Socialist government and ideology in Germany (1933\u20131945)."
@@ -500,7 +506,7 @@
       "North-South Divide"
     ],
     "type": "culture",
-    "description": "Economic and cultural contrasts across regions of the United Kingdom."
+    "description": "Regional identity discussions across the UK; alias of Modern Britain"
   },
   {
     "id": "us-politics",
