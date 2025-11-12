@@ -31,6 +31,11 @@
 - Default to existing umbrella topics when triaging `/review`; only mint a new topic when multiple episodes or series will share it.
 - Use the local review console (`npm run dev` → `http://localhost:3000/review`) to accept/map/reject proposals instead of editing JSON by hand; it writes straight to the registries and review log.
 - Backlog status: `/review` is clear after the 2025-11-11 batches. Just monitor for new entries (nightly pipeline reruns) and map them immediately so the queue stays empty.
+- Upcoming work ideas:
+  1. UI polish pass (spacing, typography, additional brand touches).
+  2. People/Places/Topics destination pages so each chip resolves to canonical content.
+  3. Site-wide search experience (start with filtered list, grow into richer query if needed).
+  4. Instrumentation (Google Analytics or preferred analytics stack) before launch.
 - Use the playbook (`docs/entity-curation-playbook.md`) as the blueprint for accept/map/reject decisions so new LLM proposals stay deterministic.
 - Plan the next enrichment batch (mid/late catalogue) once the current proposals are cleared, using `--force-llm` to target the chosen episode IDs and cap spend with `--max-llm-calls`.
 - Keep auditing registries for cross-entity collisions; reconcile duplicates early so the validator guardrail doesn’t block future pipeline runs.
