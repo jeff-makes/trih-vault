@@ -161,7 +161,8 @@ const createEpisodeDocument = (
 
   people.forEach((person) => {
     keywordParts.push(person.label);
-    const registry = getPersonDefinition(person.id) ?? getPersonDefinition(person.label);
+    const registry =
+      (person.id ? getPersonDefinition(person.id) : undefined) ?? getPersonDefinition(person.label);
     if (registry) {
       keywordParts.push(registry.preferredName);
       keywordParts.push(...registry.aliases);
@@ -171,7 +172,8 @@ const createEpisodeDocument = (
 
   places.forEach((place) => {
     keywordParts.push(place.label);
-    const registry = getPlaceDefinition(place.id) ?? getPlaceDefinition(place.label);
+    const registry =
+      (place.id ? getPlaceDefinition(place.id) : undefined) ?? getPlaceDefinition(place.label);
     if (registry) {
       keywordParts.push(registry.preferredName);
       keywordParts.push(...registry.aliases);
@@ -238,7 +240,8 @@ const createSeriesDocument = (series: PublicSeries, episodes: PublicEpisode[]): 
 
   people.forEach((person) => {
     keywordParts.push(person.label);
-    const registry = getPersonDefinition(person.id) ?? getPersonDefinition(person.label);
+    const registry =
+      (person.id ? getPersonDefinition(person.id) : undefined) ?? getPersonDefinition(person.label);
     if (registry) {
       keywordParts.push(registry.preferredName);
       keywordParts.push(...registry.aliases);
@@ -247,7 +250,8 @@ const createSeriesDocument = (series: PublicSeries, episodes: PublicEpisode[]): 
 
   places.forEach((place) => {
     keywordParts.push(place.label);
-    const registry = getPlaceDefinition(place.id) ?? getPlaceDefinition(place.label);
+    const registry =
+      (place.id ? getPlaceDefinition(place.id) : undefined) ?? getPlaceDefinition(place.label);
     if (registry) {
       keywordParts.push(registry.preferredName);
       keywordParts.push(...registry.aliases);
