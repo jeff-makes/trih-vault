@@ -65,7 +65,8 @@
   }
 
   .latest {
-    max-width: 55%;
+    max-width: 85%;
     font-size: 0.8rem;
+    gap: 4px;
   }
 }

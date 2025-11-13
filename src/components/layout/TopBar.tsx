@@ -11,6 +11,11 @@ interface TopBarProps {
   latestEpisode?: { title: string; slug: string };
 }
 
+const stripEpisodePrefix = (title: string): string => {
+  const stripped = title.replace(/^\s*(?:episode\s+)?\d+\s*[-.:–—]?\s*/i, "");
+  return stripped.length > 0 ? stripped : title;
+};
+
 export function TopBar({ latestEpisode }: TopBarProps): JSX.Element {
   const { open } = useSearchOverlay();
   const pathname = usePathname();
@@ -26,7 +31,7 @@ export function TopBar({ latestEpisode }: TopBarProps): JSX.Element {
         <div className={styles.latest}>
           <span className={styles.latestLabel}>Latest:</span>
           <Link href={`/episode/${latestEpisode.slug}`} className={styles.latestLink}>
-            {latestEpisode.title}
+            {stripEpisodePrefix(latestEpisode.title)}
           </Link>
         </div>
       ) : (
