@@ -273,6 +273,7 @@ export function SearchOverlay(): JSX.Element | null {
 
   const handleClearQuery = () => {
     setQuery("");
+    clearActiveFilter();
   };
 
   const handleResultClick = (result: SearchResult) => {
@@ -332,9 +333,6 @@ export function SearchOverlay(): JSX.Element | null {
   return (
     <div className={styles.backdrop} role="dialog" aria-modal="true">
       <div className={styles.panel} ref={containerRef}>
-        <button type="button" className={styles.closeButton} onClick={close} aria-label="Close search overlay">
-          ×
-        </button>
         <form className={styles.header} onSubmit={handleSubmit}>
           <div className={styles.searchInput}>
             <span role="img" aria-hidden="true">
@@ -421,15 +419,6 @@ export function SearchOverlay(): JSX.Element | null {
 
           {!error && query.length < 2 ? (
             <div className={styles.emptyState}>Type at least two characters or tap a chip to search the archive.</div>
-          ) : null}
-
-          {activeFilter ? (
-            <div className={styles.activeFilter}>
-              <span>Filtered by {activeFilter.label}</span>
-              <button type="button" onClick={clearActiveFilter}>
-                Clear filter
-              </button>
-            </div>
           ) : null}
 
           {!error && query.length >= 2 && results.length === 0 && !isSearching ? (
