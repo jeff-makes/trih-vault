@@ -11,7 +11,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "The Rest Is History Vault",
-  description: "Browse The Rest Is History Vault for episodes, series, people, places, and topics in one place."
+  description: "Browse The Rest Is History Vault for episodes, series, people, places, and topics in one place.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+    shortcut: "/favicon.svg"
+  }
 };
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
