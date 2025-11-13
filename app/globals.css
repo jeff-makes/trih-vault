@@ -352,12 +352,18 @@ h4 {
 }
 
 .timeline__series-part {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 11px;
-  font-weight: 500;
-  padding: 2px 6px;
+  font-weight: 600;
+  padding: 4px 10px;
   border-radius: 999px;
   background: rgba(106, 31, 27, 0.15);
   color: var(--color-accent);
+  line-height: 1;
+  min-width: 56px;
+  white-space: nowrap;
 }
 
 .timeline__card:hover,
