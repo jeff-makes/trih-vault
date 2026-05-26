@@ -89,13 +89,35 @@ const sitemapContent = [
 
 writeFileSync(SITEMAP_PATH, `${sitemapContent}\n`, "utf8");
 
-const robotsContent = [
-  "User-agent: *",
-  "Allow: /",
-  "Disallow: /review",
-  "Disallow: /api",
-  `Sitemap: ${buildUrl("/sitemap.xml")}`
-].join("\n");
+const robotsGroups = [
+  [
+    "# Default",
+    "User-agent: *",
+    "Allow: /",
+    "Disallow: /review",
+    "Disallow: /api",
+    "Disallow: /search",
+    "Disallow: /*?*",
+    `Sitemap: ${buildUrl("/sitemap.xml")}`
+  ],
+  ["User-agent: GPTBot", "Disallow: /"],
+  ["User-agent: ClaudeBot", "Disallow: /"],
+  ["User-agent: meta-externalagent", "Disallow: /"],
+  ["User-agent: oai-searchbot", "Disallow: /"],
+  ["User-agent: chatgpt-user", "Disallow: /"],
+  ["User-agent: petalbot", "Disallow: /"],
+  ["User-agent: Amazonbot", "Disallow: /"],
+  ["User-agent: SemrushBot", "Disallow: /"],
+  ["User-agent: AhrefsBot", "Disallow: /"],
+  ["User-agent: MJ12bot", "Disallow: /"],
+  ["User-agent: DotBot", "Disallow: /"],
+  ["User-agent: BLEXBot", "Disallow: /"],
+  ["User-agent: Bytespider", "Disallow: /"],
+  ["# Allow search engines", "User-agent: Googlebot", "Allow: /"],
+  ["User-agent: Bingbot", "Allow: /"]
+];
+
+const robotsContent = robotsGroups.map((group) => group.join("\n")).join("\n\n");
 
 writeFileSync(ROBOTS_PATH, `${robotsContent}\n`, "utf8");
 

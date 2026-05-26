@@ -3,6 +3,8 @@ User-agent: *
 Allow: /
 Disallow: /review
 Disallow: /api
+Disallow: /search
+Disallow: /*?*
 Sitemap: https://www.trihvault.com/sitemap.xml
 
 User-agent: GPTBot
@@ -29,10 +31,24 @@ Disallow: /
 User-agent: SemrushBot
 Disallow: /
 
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
 # Allow search engines
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
-
