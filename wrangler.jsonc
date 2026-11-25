@@ -1,0 +1,13 @@
+// Cloudflare Workers static-assets deploy. `npm run build` writes a static
+// export to ./out; there is no Worker script, so every request is served
+// straight from the asset store (free, not billed as Worker invocations).
+{
+  "name": "trih-vault",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    // /episode/foo -> out/episode/foo.html
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
