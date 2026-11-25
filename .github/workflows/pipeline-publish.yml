@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      VERCEL_REVALIDATE_URL: ${{ secrets.VERCEL_REVALIDATE_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,9 +59,3 @@ jobs:
       - name: Push changes
         if: ${{ steps.commit.outputs.changed == 'true' }}
         run: git push
-
-      - name: Trigger Vercel revalidation
-        if: ${{ steps.commit.outputs.changed == 'true' && env.VERCEL_REVALIDATE_URL != '' }}
-        run: |
-          echo "Calling Vercel revalidation webhook"
-          curl -fsS -X POST "$VERCEL_REVALIDATE_URL"
