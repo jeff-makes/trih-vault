@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run generate:sitemap && next build",
     "start": "next start",
     "lint": "next lint",
     "dev:pipeline": "tsx --tsconfig tsconfig.json src/run-local-pipeline.ts",

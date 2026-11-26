@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { getPersonStaticSlugs, getPlaceStaticSlugs, getTopicStaticSlugs } from "@/lib/entities";
 import type { PublicEpisode, PublicSeries } from "@/types";
 
 type SitemapEntry = {
@@ -10,7 +11,6 @@ type SitemapEntry = {
 
 const PUBLIC_DIR = join(process.cwd(), "public");
 const SITEMAP_PATH = join(PUBLIC_DIR, "sitemap.xml");
-const ROBOTS_PATH = join(PUBLIC_DIR, "robots.txt");
 
 const loadJson = <T>(relativePath: string): T => {
   const absolute = join(process.cwd(), relativePath);
@@ -51,23 +51,11 @@ series.forEach((seriesRecord) => {
   addEntry(`/series/${seriesRecord.slug}`, (seriesRecord as unknown as { rssLastSeenAt?: string }).rssLastSeenAt ?? null);
 });
 
-const people = loadJson<Array<{ id: string }>>(join("data", "rules", "people.json"));
-people.forEach((person) => {
-  if (!person.id) return;
-  addEntry(`/people/${encodeURIComponent(person.id)}`);
-});
-
-const places = loadJson<Array<{ id: string }>>(join("data", "rules", "places.json"));
-places.forEach((place) => {
-  if (!place.id) return;
-  addEntry(`/places/${encodeURIComponent(place.id)}`);
-});
-
-const topics = loadJson<Array<{ slug: string }>>(join("data", "rules", "topics.json"));
-topics.forEach((topic) => {
-  if (!topic.slug) return;
-  addEntry(`/topics/${encodeURIComponent(topic.slug)}`);
-});
+// Use the same slug lists the pages' generateStaticParams use, so the sitemap
+// lists exactly the entity pages that get built.
+getPersonStaticSlugs().forEach((slug) => addEntry(`/people/${encodeURIComponent(slug)}`));
+getPlaceStaticSlugs().forEach((slug) => addEntry(`/places/${encodeURIComponent(slug)}`));
+getTopicStaticSlugs().forEach((slug) => addEntry(`/topics/${encodeURIComponent(slug)}`));
 
 const sortedEntries = Array.from(entries.values()).sort((a, b) => a.loc.localeCompare(b.loc));
 
@@ -89,36 +77,4 @@ const sitemapContent = [
 
 writeFileSync(SITEMAP_PATH, `${sitemapContent}\n`, "utf8");
 
-const robotsGroups = [
-  [
-    "# Default",
-    "User-agent: *",
-    "Allow: /",
-    "Disallow: /review",
-    "Disallow: /api",
-    "Disallow: /search",
-    "Disallow: /*?*",
-    `Sitemap: ${buildUrl("/sitemap.xml")}`
-  ],
-  ["User-agent: GPTBot", "Disallow: /"],
-  ["User-agent: ClaudeBot", "Disallow: /"],
-  ["User-agent: meta-externalagent", "Disallow: /"],
-  ["User-agent: oai-searchbot", "Disallow: /"],
-  ["User-agent: chatgpt-user", "Disallow: /"],
-  ["User-agent: petalbot", "Disallow: /"],
-  ["User-agent: Amazonbot", "Disallow: /"],
-  ["User-agent: SemrushBot", "Disallow: /"],
-  ["User-agent: AhrefsBot", "Disallow: /"],
-  ["User-agent: MJ12bot", "Disallow: /"],
-  ["User-agent: DotBot", "Disallow: /"],
-  ["User-agent: BLEXBot", "Disallow: /"],
-  ["User-agent: Bytespider", "Disallow: /"],
-  ["# Allow search engines", "User-agent: Googlebot", "Allow: /"],
-  ["User-agent: Bingbot", "Allow: /"]
-];
-
-const robotsContent = robotsGroups.map((group) => group.join("\n")).join("\n\n");
-
-writeFileSync(ROBOTS_PATH, `${robotsContent}\n`, "utf8");
-
-console.log("Generated sitemap and robots.txt");
+console.log(`Generated sitemap with ${sortedEntries.length} URLs`);
